@@ -32,3 +32,10 @@ def test_cedilla(eng: RuleEngine) -> None:
 def test_cj_and_gj(eng: RuleEngine) -> None:
     assert eng.convert("cjala") == "/cala/"
     assert eng.convert("gjala") == "/ɟala/"
+
+
+def test_gn(eng: RuleEngine) -> None:
+    assert eng.convert("agna") == "/aɲa/"
+    assert eng.convert("gn") == "/ɲ/"
+    assert eng.convert("gno") == "/ɲo/"
+    assert eng.convert("ugna") == "/uɲa/"

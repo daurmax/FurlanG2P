@@ -77,6 +77,10 @@ class RuleEngine:
                 out.append("ɡ")
                 i += 2
                 continue
+            if s.startswith("gn", i):
+                out.append("ɲ")
+                i += 2
+                continue
             if s.startswith("ss", i):
                 out.append("s")
                 i += 2
