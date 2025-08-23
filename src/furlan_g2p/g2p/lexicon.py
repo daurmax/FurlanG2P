@@ -4,6 +4,7 @@ import csv
 import json
 from collections.abc import Iterable
 from dataclasses import dataclass
+from functools import lru_cache
 from importlib import resources
 
 
@@ -33,9 +34,11 @@ class Lexicon:
         Load the packaged seed lexicon.
         """
         # data file is located in "furlan_g2p/data/seed_lexicon.tsv"
-        with resources.files("furlan_g2p.data").joinpath("seed_lexicon.tsv").open(
-            "r", encoding="utf-8"
-        ) as f:
+        with (
+            resources.files("furlan_g2p.data")
+            .joinpath("seed_lexicon.tsv")
+            .open("r", encoding="utf-8") as f
+        ):
             reader = csv.DictReader(f, delimiter="\t")
             entries: dict[str, LexiconEntry] = {}
             for row in reader:
@@ -47,17 +50,24 @@ class Lexicon:
                 entries[key] = LexiconEntry(word=word, ipa=ipa, variants=variants, source=source)
         return cls(entries)
 
+    @lru_cache(maxsize=2048)  # noqa: B019 - deliberate cache on bound method
+    def _lookup(self, key: str) -> LexiconEntry | None:
+        return self._entries.get(key)
+
     def get(self, word: str) -> str | None:
-        """
-        Return the primary IPA for 'word' if present, else None.
+        """Return the primary IPA for ``word`` if present, else ``None``.
+
+        LRU-cached to avoid repeated dictionary lookups for frequent queries.
         """
         if not word:
             return None
-        entry = self._entries.get(word.lower())
+        entry = self._lookup(word.lower())
         return entry.ipa if entry else None
 
     def get_entry(self, word: str) -> LexiconEntry | None:
-        return self._entries.get(word.lower())
+        if not word:
+            return None
+        return self._lookup(word.lower())
 
     def __contains__(self, word: str) -> bool:
         return word.lower() in self._entries
@@ -70,4 +80,3 @@ class Lexicon:
 
 
 __all__ = ["Lexicon", "LexiconEntry"]
-

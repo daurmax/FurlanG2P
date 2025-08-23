@@ -71,4 +71,3 @@ def test_variants_present_for_selected(lex: Lexicon) -> None:
 
 def test_unknown_returns_none(lex: Lexicon) -> None:
     assert lex.get("nonexistent") is None
-

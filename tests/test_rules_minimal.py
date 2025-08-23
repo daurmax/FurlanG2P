@@ -21,4 +21,3 @@ from furlan_g2p.g2p.rules import orth_to_ipa_basic
 )
 def test_minimal_rules(word: str, expected: str) -> None:
     assert orth_to_ipa_basic(word) == expected
-
