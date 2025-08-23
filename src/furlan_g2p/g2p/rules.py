@@ -124,4 +124,3 @@ class PhonemeRules:
 
 
 __all__ = ["orth_to_ipa_basic", "PhonemeRules"]
-
