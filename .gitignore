@@ -27,6 +27,7 @@ Pytest / coverage
 .pytest_cache/
 .coverage
 htmlcov/
+.hypothesis/
 
 OS junk
 
