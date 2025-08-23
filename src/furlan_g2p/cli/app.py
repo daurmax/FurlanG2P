@@ -6,7 +6,44 @@ import sys
 
 import click
 
+from ..g2p.lexicon import Lexicon
+from ..g2p.rule_engine import RuleEngine
+from ..normalization.experimental_normalizer import ExperimentalNormalizer
 from ..services.pipeline import PipelineService
+
+_NORMALIZER = ExperimentalNormalizer()
+_LEXICON = Lexicon.load_seed()
+_RULES = RuleEngine()
+
+
+def _strip_slashes(ipa: str) -> str:
+    """Return ``ipa`` without leading and trailing slashes."""
+
+    if ipa.startswith("/") and ipa.endswith("/"):
+        return ipa[1:-1]
+    return ipa
+
+
+def _split_apostrophes(token: str) -> list[str]:
+    """Split ``token`` on apostrophes while keeping them as separate elements."""
+
+    parts: list[str] = []
+    start = 0
+    for idx, ch in enumerate(token):
+        if ch == "'":
+            if start < idx:
+                parts.append(token[start:idx])
+            parts.append("'")
+            start = idx + 1
+    if start < len(token):
+        parts.append(token[start:])
+    return parts
+
+
+def _is_pause(token: str) -> bool:
+    """Return ``True`` if ``token`` consists solely of underscores."""
+
+    return bool(token) and set(token) <= {"_"}
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
@@ -42,6 +79,64 @@ def cmd_phonemize_csv(inp: str, out: str, delim: str) -> None:
     """Batch phonemize an LJSpeech-like CSV file."""
     PipelineService()
     raise NotImplementedError("phonemize-csv command is not implemented yet.")
+
+
+@cli.command(
+    "ipa",
+    help="[experimental] Convert text to IPA using the seed lexicon and rule-based fallback.",
+)
+@click.option(
+    "--rules-only",
+    is_flag=True,
+    default=False,
+    help="Skip lexicon lookup and always use the rule engine.",
+)
+@click.option(
+    "--with-slashes/--no-slashes",
+    default=False,
+    help="Wrap each token's IPA in /slashes/.",
+)
+@click.option(
+    "--sep",
+    default=" ",
+    show_default=True,
+    help="Separator used to join output tokens.",
+)
+@click.argument("text", nargs=-1, required=True)
+def cmd_ipa(
+    text: tuple[str, ...],
+    rules_only: bool,
+    with_slashes: bool,
+    sep: str,
+) -> None:
+    """Phonemize ``text`` using experimental components."""
+
+    raw_sentence = " ".join(text)
+    tokens: list[str] = []
+    for raw in raw_sentence.split():
+        if _is_pause(raw):
+            tokens.append(raw)
+            continue
+        tokens.extend(_NORMALIZER.normalize(raw))
+    out_tokens: list[str] = []
+    for token in tokens:
+        if _is_pause(token):
+            out_tokens.append(token)
+            continue
+        parts = _split_apostrophes(token)
+        ipa_parts: list[str] = []
+        for part in parts:
+            if part == "'":
+                ipa_parts.append(part)
+                continue
+            ipa = (
+                _RULES.convert(part) if rules_only else (_LEXICON.get(part) or _RULES.convert(part))
+            )
+            if not with_slashes:
+                ipa = _strip_slashes(ipa)
+            ipa_parts.append(ipa)
+        out_tokens.append("".join(ipa_parts))
+    click.echo(sep.join(out_tokens))
 
 
 def main() -> None:  # pragma: no cover - small wrapper
