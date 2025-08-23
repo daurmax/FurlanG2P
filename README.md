@@ -1,39 +1,24 @@
-FurlanG2P
+# FurlanG2P
 
-FurlanG2P is a library-first skeleton for building a grapheme-to-phoneme (G2P) and text normalization toolkit, designed for TTS prototyping. This repository currently ships a clean, scalable structure with interfaces, services, and a CLI scaffold — domain logic is intentionally unimplemented and should be filled in later.
+Friulian (Furlan) G2P library. This repository aims for a maintainable, test-driven path: start with a tiny gold lexicon (citable IPA) and a minimal, explicit ruleset; evolve toward full normalization, tokenization, G2P, and phonology.
 
-Features (skeleton)
+## Status
 
-- src/ layout, Python ≥ 3.10
-- Clear module boundaries (core, normalization, tokenization, g2p, phonology, services, cli, config)
-- Public API via furlan_g2p.__init__
-- CLI entrypoint: furlang2p
-- Tests using pytest
+- ✅ Packaged seed lexicon with gold IPA.
+- ✅ Minimal rules: circumflex length; `ç`, `ce/ci` → `t͡ʃ`; `cj` → `c`; intervocalic `s` → `z`; basic `c/ch`, `g/gh`.
+- ⏳ CLI and pipeline remain unimplemented stubs (by design for now).
 
-Install (editable)
+## References
 
-```bash
-pip install -e ".[dev]"
-```
+Authoritative grammar/orthography (ARLeF):
+- **GRAFIE** (official orthography, cj/gj, c~ç, long vowels with circumflex): https://arlef.it/app/uploads/documenti/Grafie_cuadrileng%C3%A2l_ed2017.pdf
+- **Dut par furlan – Lezione 7** (when to write circumflex; patterns like `pôc`, `côr`): https://arlef.it/app/uploads/2020/12/dutparfurlan_lez-7-ita-def.pdf
 
-CLI
+Overview of long vowels and dialectal diphthongization:
+- Wikipedia (Friulian language): https://en.wikipedia.org/wiki/Friulian_language
 
-```bash
-furlang2p --help
-```
+Quick alphabet/pronunciation overview:
+- Omniglot: https://www.omniglot.com/writing/friulian.htm
 
-Library usage
+Gold IPA sources (Wiktionary) are embedded in `src/furlan_g2p/data/seed_lexicon.tsv` and cited in tests.
 
-```python
-from furlan_g2p import Normalizer, Tokenizer, G2PPhonemizer
-
-# Instantiate and call methods (these raise NotImplementedError in the skeleton)
-```
-
-Contributing
-
-Open issues and PRs are welcome.
-
-License
-
-MIT
