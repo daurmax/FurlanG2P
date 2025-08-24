@@ -19,7 +19,8 @@ venv/
 
 Editors
 
-.vscode/
+.vscode/*
+!.vscode/tasks.json
 .idea/
 
 Pytest / coverage
