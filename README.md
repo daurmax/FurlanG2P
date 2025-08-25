@@ -6,14 +6,66 @@ an experimental ``ipa`` command-line tool. Other pieces of the pipeline – text
 normalisation, tokenisation, full G2P and phonology – are present as skeletons
 and currently raise ``NotImplementedError``.
 
-## Installation
+## Quick local run (how to launch the CLI and test phrases)
 
 1. Create and activate a virtual environment:
 
+   - macOS / Linux:
+     ```bash
+     python -m venv .venv
+     source .venv/bin/activate
+     ```
+   - Windows (PowerShell):
+     ```powershell
+     python -m venv .venv
+     .\.venv\Scripts\Activate.ps1
+     ```
+   - Windows (cmd.exe):
+     ```
+     python -m venv .venv
+     .\.venv\Scripts\activate
+     ```
+
+2. Install the package in editable mode so the `furlang2p` console script becomes available:
+
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # Windows: .venv\Scripts\activate
+   pip install -e .
    ```
+
+3. Run the CLI and test short phrases (examples):
+
+   - Basic phonemize using the seed lexicon with rule fallback:
+     ```bash
+     furlang2p ipa "ìsule glace"
+     # Example output:
+     # -> ˈi.zu.le ˈɡlat͡ʃe
+     ```
+
+   - Wrap each token in slashes:
+     ```bash
+     furlang2p ipa --with-slashes "glaç"
+     # -> /ˈɡlat͡ʃe/
+     ```
+
+   - Force rule-based conversion (skip lexicon lookup):
+     ```bash
+     furlang2p ipa --rules-only "glaç"
+     # -> ˈɡlat͡ʃe
+     ```
+
+   - Use underscores as pause markers and change token separator:
+     ```bash
+     furlang2p ipa --sep '|' _ "ìsule" __
+     # -> _|ˈi.zu.le|__
+     ```
+
+   Notes:
+   - Quotes around the phrase are recommended to preserve spacing and punctuation.
+   - The CLI is experimental; some commands (normalize, g2p, phonemize-csv) are stubs that raise NotImplementedError.
+
+## Installation
+
+1. Create and activate a virtual environment (see Quick local run above).
 
 2. Install the project:
 
@@ -33,29 +85,7 @@ The package exposes a ``furlang2p`` CLI. At present only the experimental
 ``ipa`` subcommand does real work; the ``normalize``, ``g2p`` and
 ``phonemize-csv`` commands are stubs that abort with ``NotImplementedError``.
 
-Phonemise short phrases via the seed lexicon with rule-based fallback:
-
-```bash
-furlang2p ipa ìsule glace
-# -> ˈi.zu.le ˈɡlat͡ʃe
-```
-
-Wrap each token in ``/slashes/`` or force rule-based conversion:
-
-```bash
-furlang2p ipa --with-slashes glaç
-furlang2p ipa --rules-only glaç
-```
-
-Underscores act as short/long pause markers and the ``--sep`` option controls
-output token separation:
-
-```bash
-furlang2p ipa --sep '|' _ ìsule __
-# -> _|ˈi.zu.le|__
-```
-
-See ``furlang2p ipa --help`` for full details.
+Run `furlang2p --help` or `furlang2p ipa --help` for full details about options.
 
 ## Development
 
