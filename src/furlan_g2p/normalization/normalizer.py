@@ -2,13 +2,24 @@
 
 from __future__ import annotations
 
+import re
+
 from ..config.schemas import NormalizerConfig
 from ..core.exceptions import NormalizationError  # noqa: F401
 from ..core.interfaces import INormalizer
 
 
 class Normalizer(INormalizer):
-    """Text normalizer (skeleton)."""
+    """Simple text normalizer.
+
+    The current implementation performs very lightweight normalization by
+    lowercasing the input and collapsing consecutive whitespace characters.
+
+    Examples
+    --------
+    >>> Normalizer().normalize("  Bêle  CJASE  ")
+    'bêle cjase'
+    """
 
     def __init__(self, config: NormalizerConfig | None = None) -> None:
         self.config = config or NormalizerConfig()
@@ -16,13 +27,28 @@ class Normalizer(INormalizer):
     def normalize(self, text: str) -> str:
         """Normalize raw input text into a canonical, speakable form.
 
-        Args:
-            text: Raw input text.
+        Parameters
+        ----------
+        text:
+            Raw input text.
 
-        Raises:
-            NormalizationError: If the text cannot be normalized.
+        Returns
+        -------
+        str
+            Normalized text.
+
+        Raises
+        ------
+        NormalizationError
+            If the text cannot be normalized.
         """
-        raise NotImplementedError("Normalization logic is not implemented yet.")
+
+        if not isinstance(text, str):  # pragma: no cover - defensive programming
+            raise NormalizationError("Input must be a string")
+
+        # Collapse whitespace and lowercase.
+        normalized = re.sub(r"\s+", " ", text.strip()).lower()
+        return normalized
 
 
 __all__ = ["Normalizer"]
