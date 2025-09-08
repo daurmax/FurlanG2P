@@ -65,9 +65,17 @@ and currently raise ``NotImplementedError``.
 
 ## Installation
 
+### From PyPI
+
+```bash
+pip install furlang2p
+```
+
+### From source
+
 1. Create and activate a virtual environment (see Quick local run above).
 
-2. Install the project:
+2. Install the project in editable mode:
 
    ```bash
    pip install -e .
