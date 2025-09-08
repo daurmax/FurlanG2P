@@ -114,20 +114,10 @@ Palette and choose the desired action.
 
 ## References
 
-Authoritative grammar/orthography (ARLeF):
-
-- **GRAFIE** (official orthography, cj/gj, c~ç, long vowels with circumflex): https://arlef.it/app/uploads/documenti/Grafie_cuadrileng%C3%A2l_ed2017.pdf
-- **Dut par furlan – Lezione 7** (when to write circumflex; patterns like ``pôc``, ``côr``): https://arlef.it/app/uploads/2020/12/dutparfurlan_lez-7-ita-def.pdf
-
-Overview of long vowels and dialectal diphthongisation:
-
-- Wikipedia (Friulian language): https://en.wikipedia.org/wiki/Friulian_language
-
-Quick alphabet/pronunciation overview:
-
-- Omniglot: https://www.omniglot.com/writing/friulian.htm
-
-Gold IPA sources (Wiktionary) are embedded in ``src/furlan_g2p/data/seed_lexicon.tsv`` and cited in tests.
+This project draws on published descriptions of Friulian orthography and
+phonology as well as lemma-level IPA transcriptions. A curated bibliography with
+live and archived links is maintained in
+[docs/references.md](docs/references.md).
 
 ## Contributing
 
