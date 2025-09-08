@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from importlib import metadata
-
+from .__about__ import __version__
 from .core.interfaces import (
     IG2PPhonemizer,
     INormalizer,
@@ -17,10 +16,7 @@ from .phonology.stress import StressAssigner
 from .phonology.syllabifier import Syllabifier
 from .tokenization.tokenizer import Tokenizer
 
-try:
-    version = metadata.version("furlang2p")
-except metadata.PackageNotFoundError:  # pragma: no cover
-    version = "0.0.0"
+version = __version__
 
 __all__ = [
     "version",

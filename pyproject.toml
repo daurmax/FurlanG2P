@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "furlang2p"
-version = "0.0.1"
+dynamic = ["version"]
 description = "FurlanG2P: a scalable, library-first G2P and text normalization toolkit (skeleton)."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -65,6 +65,9 @@ warn_unused_configs = true
 minversion = "8.0"
 addopts = "-q"
 testpaths = ["tests"]
+
+[tool.hatch.version]
+path = "src/furlan_g2p/__about__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/furlan_g2p"]
