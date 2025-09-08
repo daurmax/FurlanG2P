@@ -14,24 +14,24 @@ def _lex() -> Lexicon:
 
 def test_isule() -> None:
     """https://en.wiktionary.org/wiki/%C3%ACsule"""
-    assert _lex().get("ìsule") == "/ˈi.zu.le/"
+    assert _lex().get("ìsule") == "ˈizule"
 
 
 def test_glace() -> None:
     """https://en.wiktionary.org/wiki/glace"""
-    assert _lex().get("glace") == "/ˈɡlat͡ʃe/"
+    assert _lex().get("glace") == "ˈglatʃe"
 
 
 def test_glac_cedilla() -> None:
     """https://en.wiktionary.org/wiki/gla%C3%A7"""
-    assert _lex().get("glaç") == "/ˈɡlat͡ʃ/"
+    assert _lex().get("glaç") == "ˈglatʃ"
 
 
 def test_cjase() -> None:
     """https://en.wiktionary.org/wiki/cjase"""
-    assert _lex().get("cjase") == "/ˈca.ze/"
+    assert _lex().get("cjase") == "ˈcaze"
 
 
 def test_cjandele() -> None:
     """https://en.wiktionary.org/wiki/cjandele"""
-    assert _lex().get("cjandele") == "/caɳˈdɛ.le/"
+    assert _lex().get("cjandele") == "caɲˈdɛle"

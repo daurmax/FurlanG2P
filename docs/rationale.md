@@ -11,7 +11,7 @@ The experimental rule engine applies rules from longest to shortest context:
 
 1. `cj` → `c` and `gj` → `ɟ` (palatal stops). [ARLeF – GRAFIE]
 2. `ch`/`gh` harden `c`/`g` before front vowels. [ARLeF – GRAFIE]
-3. `c` before `e i ê î` → `t͡ʃ`; `ç` always → `t͡ʃ`. [ARLeF – GRAFIE]
+3. `c` before `e i ê î` → `tʃ`; `ç` always → `tʃ`. [ARLeF – GRAFIE]
 4. Intervocalic `s` → `z`; `ss` remains voiceless. [ìsule on Wiktionary]
 5. Circumflex vowels map to long monophthongs. [ARLeF – Lezione 7; Wikipedia – Friulian language]
 

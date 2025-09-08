@@ -12,7 +12,7 @@ norm = ExperimentalNormalizer()
 
 def test_apostrophes_and_tokenization() -> None:
     text = "L’cjase, ‘bêle’!"
-    assert norm.normalize(text) == ["l'cjase", "bêle"]
+    assert norm.normalize(text) == ["l'cjase", "_", "bêle", "__"]
 
 
 def test_nfc_normalization() -> None:
@@ -24,10 +24,10 @@ def test_nfc_normalization() -> None:
     assert unicodedata.is_normalized("NFC", tokens[0])
 
 
-ALPHABET = "abcçdefghilmnopqrstuvzâêîôûàèìòù'’ \t.,!?"
+ALPHABET = "abcçdefghilmnopqrstuvzâêîôûàèìòù'’ \t.,!?;:"
 
 
-@given(st.text(alphabet=ALPHABET, max_size=20))
+@given(st.text(alphabet=ALPHABET, max_size=20))  # type: ignore[misc]
 def test_idempotence(s: str) -> None:
     tokens = norm.normalize(s)
     recombined = " ".join(tokens)

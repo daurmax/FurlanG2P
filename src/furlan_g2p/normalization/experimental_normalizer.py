@@ -14,7 +14,7 @@ from functools import lru_cache
 # Map curly apostrophes to straight ASCII ones.
 _APOSTROPHES_RE = re.compile("[\u2019\u2018\u02bc]")
 # Leading/trailing punctuation to strip; internal apostrophes are preserved.
-_STRIP_RE = re.compile(r"^[\W_]+|[\W_]+$", re.UNICODE)
+_STRIP_RE = re.compile(r"^\W+|\W+$", re.UNICODE)
 
 
 class ExperimentalNormalizer:
@@ -24,8 +24,9 @@ class ExperimentalNormalizer:
     1. Unicode NFC normalization.
     2. Map curly apostrophes to ASCII ``'``.
     3. Lowercase.
-    4. Strip leading/trailing punctuation per token.
-    5. Tokenize on whitespace.
+    4. Map `, ; :` to ``_`` and `. ? !` to ``__``.
+    5. Strip leading/trailing punctuation per token.
+    6. Tokenize on whitespace.
     """
 
     def __init__(self) -> None:
@@ -39,6 +40,8 @@ class ExperimentalNormalizer:
         s = unicodedata.normalize("NFC", text)
         s = _APOSTROPHES_RE.sub("'", s)
         s = s.lower()
+        s = re.sub(r"[,;:]", " _ ", s)
+        s = re.sub(r"[.?!]", " __ ", s)
         tokens: list[str] = []
         for raw in s.split():
             token = _STRIP_RE.sub("", raw)

@@ -6,10 +6,10 @@ from hypothesis import strategies as st
 from furlan_g2p.g2p.rule_engine import RuleEngine
 
 ALPHABET = "abcçdefghijlmnoprstuvzâêîôûàèìòù"
-IPA_CHARS = set("/abcdefhijklmnoprstuvzàèìòùɡɟɲʃ͡ː")
+IPA_CHARS = set("abcdefhijklmnoprstuvzàèìòùɟɲʃːˈɛɔg")
 
 
-@given(st.text(alphabet=ALPHABET, min_size=1, max_size=10))
+@given(st.text(alphabet=ALPHABET, min_size=1, max_size=10))  # type: ignore[misc]
 def test_outputs_are_ipa_only(s: str) -> None:
     eng = RuleEngine()
     out = eng.convert(s)

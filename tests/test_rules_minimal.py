@@ -13,10 +13,10 @@ from furlan_g2p.g2p.rules import orth_to_ipa_basic
 @pytest.mark.parametrize(
     "word,expected",
     [
-        ("cûr", "/kuːr/"),  # circumflex length + k
-        ("glaç", "/ɡlat͡ʃ/"),  # ç -> t͡ʃ
-        ("glace", "/ɡlat͡ʃe/"),  # ce -> t͡ʃe
-        ("cjaval", "/caˈval/"),  # cj -> c, rough stress heuristic (optional)
+        ("cûr", "kuːr"),  # circumflex length + k
+        ("glaç", "glatʃ"),  # ç -> tʃ
+        ("glace", "glatʃe"),  # ce -> tʃe
+        ("cjaval", "caˈval"),  # cj -> c, rough stress heuristic (optional)
     ],
 )
 def test_minimal_rules(word: str, expected: str) -> None:

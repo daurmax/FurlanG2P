@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from functools import lru_cache
 from importlib import resources
 
+from ..phonology import canonicalize_ipa
+
 
 @dataclass(frozen=True)
 class LexiconEntry:
@@ -43,8 +45,9 @@ class Lexicon:
             entries: dict[str, LexiconEntry] = {}
             for row in reader:
                 word = row["word"].strip()
-                ipa = row["ipa"].strip()
-                variants = tuple(json.loads(row.get("variants_json", "[]") or "[]"))
+                ipa = canonicalize_ipa(row["ipa"].strip())
+                raw_variants = json.loads(row.get("variants_json", "[]") or "[]")
+                variants = tuple(canonicalize_ipa(v) for v in raw_variants)
                 source = row["source"].strip()
                 key = word.lower()
                 entries[key] = LexiconEntry(word=word, ipa=ipa, variants=variants, source=source)

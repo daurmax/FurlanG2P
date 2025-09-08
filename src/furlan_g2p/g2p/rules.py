@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Literal
 
+from ..phonology import canonicalize_ipa
+
 Dialect = Literal["central", "western_codroipo", "carnia"]
 
 # Minimal symbol maps (intentionally incomplete).
@@ -28,9 +30,9 @@ def orth_to_ipa_basic(word: str, dialect: Dialect = "central") -> str:
     """
     Very small, deterministic mapping. Handles:
     - circumflex vowels → long monophthongs (central);
-    - 'ç' → t͡ʃ;
-    - 'c' before e/i → t͡ʃ, else k;
-    - 'ch' → k; 'gh' → ɡ; 'g' default ɡ (no special handling before e/i here);
+    - 'ç' → tʃ;
+    - 'c' before e/i → tʃ, else k;
+    - 'ch' → k; 'gh' → g; 'g' default g (no special handling before e/i here);
     - 'cj' → c (palatal stop); 'gj' → ɟ;
     - intervocalic 's' → z;
     - 'j' → j (approximant);
@@ -39,7 +41,7 @@ def orth_to_ipa_basic(word: str, dialect: Dialect = "central") -> str:
     Stress: if a circumflex or grave-accented vowel exists, place primary stress before its syllable
     (very crude); otherwise leave stress unmarked.
 
-    Returns a string like '/kuːr/'.
+    Returns a canonical IPA string like 'kuːr'.
     """
     if not word:
         return "/"
@@ -58,7 +60,7 @@ def orth_to_ipa_basic(word: str, dialect: Dialect = "central") -> str:
             i += 2
             continue
         if s.startswith("gh", i):
-            out.append("ɡ")
+            out.append("g")
             i += 2
             continue
         if s.startswith("cj", i):
@@ -72,12 +74,12 @@ def orth_to_ipa_basic(word: str, dialect: Dialect = "central") -> str:
 
         # single letters
         if ch == "ç":
-            out.append("t͡ʃ")
+            out.append("tʃ")
         elif ch == "c":
             nxt = s[i + 1] if i + 1 < len(s) else ""
-            out.append("t͡ʃ" if nxt in ("e", "i", "ê", "î") else "k")
+            out.append("tʃ" if nxt in ("e", "i", "ê", "î") else "k")
         elif ch == "g":
-            out.append("ɡ")
+            out.append("g")
         elif ch == "j":
             out.append("j")
         elif ch == "s":
@@ -110,7 +112,7 @@ def orth_to_ipa_basic(word: str, dialect: Dialect = "central") -> str:
         insert_pos = sum(len(out[j]) for j in range(seg_idx))
         ipa = ipa[:insert_pos] + "ˈ" + ipa[insert_pos:]
 
-    return f"/{ipa}/"
+    return canonicalize_ipa(ipa)
 
 
 class PhonemeRules:
