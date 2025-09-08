@@ -15,6 +15,12 @@ Agent tasks (suggested):
 - Wire services into CLI subcommands; add CSV batch processing.
 - Add real tests, fixtures, and golden sets.
 
+Reference checks:
+
+- When changing business logic (rules, lexicon, phonology, etc.), consult the
+  bibliography in `docs/references.md` to ensure modifications align with the
+  cited sources.
+
 Coding standards:
 
 - Type hints everywhere.
