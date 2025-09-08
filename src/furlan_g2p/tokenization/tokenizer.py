@@ -59,7 +59,7 @@ class Tokenizer(ITokenizer):
             Lowercase word tokens without punctuation.
         """
 
-        return re.findall(r"[a-zâêîôûàèìòùç']+", sentence.lower())
+        return re.findall(r"[a-zâêîôûàèìòùç'’]+", sentence.lower())
 
 
 __all__ = ["Tokenizer"]

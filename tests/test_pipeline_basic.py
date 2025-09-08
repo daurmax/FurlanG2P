@@ -20,6 +20,7 @@ def test_tokenizer_basic() -> None:
     tok = Tokenizer()
     assert tok.split_sentences("A. B!") == ["A.", "B!"]
     assert tok.split_words("Bêle cjase!") == ["bêle", "cjase"]
+    assert tok.split_words("L’orele e biele") == ["l’orele", "e", "biele"]
 
 
 def test_g2p_basic() -> None:
@@ -29,10 +30,10 @@ def test_g2p_basic() -> None:
 
 def test_phonology_basic() -> None:
     syll = Syllabifier()
-    syllables = syll.syllabify(["c", "a", "z", "e"])
-    assert syllables == [["c", "a"], ["z", "e"]]
+    syllables = syll.syllabify(["o", "r", "e", "l", "e"])
+    assert syllables == [["o"], ["r", "e"], ["l", "e"]]
     stress = StressAssigner()
-    assert stress.assign_stress(syllables) == [["ˈc", "a"], ["z", "e"]]
+    assert stress.assign_stress(syllables) == [["o"], ["ˈr", "e"], ["l", "e"]]
 
 
 def test_pipeline_basic() -> None:
@@ -40,6 +41,9 @@ def test_pipeline_basic() -> None:
     norm, phons = pipe.process_text("Cjase")
     assert norm == "cjase"
     assert phons == ["ˈc", "a", "z", "e"]
+    norm2, phons2 = pipe.process_text("Orele")
+    assert norm2 == "orele"
+    assert phons2 == ["o", "ˈr", "e", "l", "e"]
 
 
 def test_io_service(tmp_path) -> None:  # type: ignore[no-untyped-def]

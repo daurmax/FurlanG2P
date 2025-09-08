@@ -12,30 +12,54 @@ def _is_vowel(ph: str) -> bool:
 
 
 class Syllabifier(ISyllabifier):
-    """Naive syllabifier.
+    """Basic syllabifier using onset maximization.
 
-    Each vowel starts a new syllable and trailing consonants are attached to
-    the preceding vowel.  This is intentionally simplistic but sufficient for
-    demonstration purposes.
+    Consonant clusters between vowels are split so that the last consonant
+    begins the following syllable; clusters ending in ``r``, ``l`` or ``j`` are
+    allowed as complex onsets.
 
     Examples
     --------
-    >>> Syllabifier().syllabify(['c', 'a', 'z', 'e'])
-    [['c', 'a'], ['z', 'e']]
+    >>> Syllabifier().syllabify(['o', 'r', 'e', 'l', 'e'])
+    [['o'], ['r', 'e'], ['l', 'e']]
     """
 
     def syllabify(self, phonemes: Iterable[str]) -> list[list[str]]:
         """Split a phoneme sequence into syllables."""
 
+        phs = list(phonemes)
         syllables: list[list[str]] = []
-        current: list[str] = []
-        for ph in phonemes:
-            current.append(ph)
+        onset: list[str] = []
+        i = 0
+        while i < len(phs):
+            ph = phs[i]
             if _is_vowel(ph):
-                syllables.append(current)
-                current = []
-        if current:
-            syllables.append(current)
+                nucleus = ph
+                i += 1
+                cluster: list[str] = []
+                while i < len(phs) and not _is_vowel(phs[i]):
+                    cluster.append(phs[i])
+                    i += 1
+                if i < len(phs):
+                    if len(cluster) >= 2 and cluster[-1] in {"r", "l", "j"}:
+                        coda = cluster[:-2]
+                        next_onset = cluster[-2:]
+                    else:
+                        coda = cluster[:-1]
+                        next_onset = cluster[-1:]
+                    syllables.append(onset + [nucleus] + coda)
+                    onset = next_onset
+                else:
+                    syllables.append(onset + [nucleus] + cluster)
+                    onset = []
+            else:
+                onset.append(ph)
+                i += 1
+        if onset:
+            if syllables:
+                syllables[-1].extend(onset)
+            else:
+                syllables.append(onset)
         return syllables
 
 
