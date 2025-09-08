@@ -8,6 +8,8 @@ limited and exists in parallel to the unfinished public API.
 import unicodedata
 from functools import lru_cache
 
+from ..phonology import canonicalize_ipa
+
 # Digraph precedence handled explicitly in the main loop to avoid regex backtracking.
 # Vowel inventory for quick context checks.
 _VOWELS = "aâeêiîoôuûàèìòù"
@@ -36,7 +38,7 @@ class RuleEngine:
 
     - ``cj`` → ``c`` and ``gj`` → ``ɟ`` (palatal stops) [ARLeF GRAFIE].
     - ``ch``/``gh`` harden ``c``/``g`` before front vowels.
-    - ``c`` before ``e i ê î`` → ``t͡ʃ``; ``ç`` → ``t͡ʃ`` elsewhere.
+    - ``c`` before ``e i ê î`` → ``tʃ``; ``ç`` → ``tʃ`` elsewhere.
     - Intervocalic ``s`` → ``z`` but ``ss`` stays ``s``.
     - Long vowels with circumflex get a length mark.
 
@@ -74,7 +76,7 @@ class RuleEngine:
                 i += 2
                 continue
             if s.startswith("gh", i):
-                out.append("ɡ")
+                out.append("g")
                 i += 2
                 continue
             if s.startswith("gn", i):
@@ -88,10 +90,10 @@ class RuleEngine:
 
             ch = s[i]
             if ch == "ç":
-                out.append("t͡ʃ")
+                out.append("tʃ")
             elif ch == "c":
                 nxt = s[i + 1] if i + 1 < len(s) else ""
-                out.append("t͡ʃ" if nxt in "eêiî" else "k")
+                out.append("tʃ" if nxt in "eêiî" else "k")
             elif ch == "s":
                 out.append("z" if _between_vowels(s, i) else "s")
             elif ch in _LONG_VOWELS:
@@ -101,13 +103,13 @@ class RuleEngine:
             elif ch == "j":
                 out.append("j")
             elif ch == "g":
-                out.append("ɡ")
+                out.append("g")
             elif ch == "r":
                 out.append("r")
             else:
                 out.append(ch)
             i += 1
-        return f"/{''.join(out)}/"
+        return canonicalize_ipa("".join(out))
 
 
 __all__ = ["RuleEngine"]

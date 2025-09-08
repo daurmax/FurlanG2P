@@ -38,25 +38,25 @@ and currently raise ``NotImplementedError``.
      ```bash
      furlang2p ipa "ìsule glace"
      # Example output:
-     # -> ˈi.zu.le ˈɡlat͡ʃe
+     # -> ˈizule ˈglatʃe
      ```
 
    - Wrap each token in slashes:
      ```bash
      furlang2p ipa --with-slashes "glaç"
-     # -> /ˈɡlat͡ʃe/
+     # -> /ˈglatʃ/
      ```
 
    - Force rule-based conversion (skip lexicon lookup):
      ```bash
      furlang2p ipa --rules-only "glaç"
-     # -> ˈɡlat͡ʃe
+     # -> glatʃ
      ```
 
    - Use underscores as pause markers and change token separator:
      ```bash
      furlang2p ipa --sep '|' _ "ìsule" __
-     # -> _|ˈi.zu.le|__
+     # -> _|ˈizule|__
      ```
 
    Notes:

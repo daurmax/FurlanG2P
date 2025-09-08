@@ -26,24 +26,24 @@ from furlan_g2p.g2p.lexicon import Lexicon
 # - côr: https://en.wiktionary.org/wiki/c%C3%B4r
 
 GOLD = {
-    "cûr": "/kuːr/",
-    "fûc": "/fuːk/",
-    "pôc": "/poːk/",
-    "sêt": "/seːt/",
-    "fâ": "/ˈfaː/",
-    "fîl": "/fiːl/",
-    "patî": "/paˈti/",
-    "sufrî": "/suˈfriː/",
-    "nemâl": "/neˈmaːl/",
-    "ìsule": "/ˈi.zu.le/",
-    "orele": "/oˈrɛ.le/",
-    "strie": "/ˈstriɛ/",
-    "glace": "/ˈɡlat͡ʃe/",
-    "glaç": "/ˈɡlat͡ʃ/",
-    "cjaval": "/caˈval/",
-    "pît": "/piːt/",
-    "mûr": "/muːr/",
-    "côr": "/kɔːr/",
+    "cûr": "kuːr",
+    "fûc": "fuːk",
+    "pôc": "poːk",
+    "sêt": "seːt",
+    "fâ": "ˈfaː",
+    "fîl": "fiːl",
+    "patî": "paˈti",
+    "sufrî": "suˈfriː",
+    "nemâl": "neˈmaːl",
+    "ìsule": "ˈizule",
+    "orele": "oˈrɛle",
+    "strie": "ˈstriɛ",
+    "glace": "ˈglatʃe",
+    "glaç": "ˈglatʃ",
+    "cjaval": "caˈval",
+    "pît": "piːt",
+    "mûr": "muːr",
+    "côr": "kɔːr",
 }
 
 
@@ -60,13 +60,13 @@ def test_seed_lexicon_contains_gold(word: str, ipa: str, lex: Lexicon) -> None:
 def test_variants_present_for_selected(lex: Lexicon) -> None:
     # a few with known dialectal alternations
     entry = lex.get_entry("fûc")
-    assert entry is not None and "/fouk/" in entry.variants
+    assert entry is not None and "fouk" in entry.variants
     entry = lex.get_entry("pôc")
-    assert entry is not None and "/pouk/" in entry.variants
+    assert entry is not None and "pouk" in entry.variants
     entry = lex.get_entry("sêt")
-    assert entry is not None and "/seit/" in entry.variants
+    assert entry is not None and "seit" in entry.variants
     entry = lex.get_entry("pît")
-    assert entry is not None and "/peit/" in entry.variants
+    assert entry is not None and "peit" in entry.variants
 
 
 def test_unknown_returns_none(lex: Lexicon) -> None:

@@ -13,7 +13,7 @@ def test_isule_cjase_phrase() -> None:
     words = ["ìsule", "cjase"]
     ipa = [lex.get(w) or "" for w in words]
     assert all(ipa)
-    assert " ".join(ipa) == "/ˈi.zu.le/ /ˈca.ze/"
+    assert " ".join(ipa) == "ˈizule ˈcaze"
 
 
 def test_glace_cjandele_phrase() -> None:
@@ -21,4 +21,4 @@ def test_glace_cjandele_phrase() -> None:
     words = ["glace", "cjandele"]
     ipa = [lex.get(w) or "" for w in words]
     assert all(ipa)
-    assert " ".join(ipa) == "/ˈɡlat͡ʃe/ /caɳˈdɛ.le/"
+    assert " ".join(ipa) == "ˈglatʃe caɲˈdɛle"

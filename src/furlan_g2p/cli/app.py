@@ -9,19 +9,12 @@ import click
 from ..g2p.lexicon import Lexicon
 from ..g2p.rule_engine import RuleEngine
 from ..normalization.experimental_normalizer import ExperimentalNormalizer
+from ..phonology import canonicalize_ipa
 from ..services.pipeline import PipelineService
 
 _NORMALIZER = ExperimentalNormalizer()
 _LEXICON = Lexicon.load_seed()
 _RULES = RuleEngine()
-
-
-def _strip_slashes(ipa: str) -> str:
-    """Return ``ipa`` without leading and trailing slashes."""
-
-    if ipa.startswith("/") and ipa.endswith("/"):
-        return ipa[1:-1]
-    return ipa
 
 
 def _split_apostrophes(token: str) -> list[str]:
@@ -129,11 +122,12 @@ def cmd_ipa(
             if part == "'":
                 ipa_parts.append(part)
                 continue
-            ipa = (
+            raw_ipa = (
                 _RULES.convert(part) if rules_only else (_LEXICON.get(part) or _RULES.convert(part))
             )
-            if not with_slashes:
-                ipa = _strip_slashes(ipa)
+            ipa = canonicalize_ipa(raw_ipa)
+            if with_slashes:
+                ipa = f"/{ipa}/"
             ipa_parts.append(ipa)
         out_tokens.append("".join(ipa_parts))
     click.echo(sep.join(out_tokens))
