@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "FurlanG2P Team", email = "maintainers@example.com" }
+  { name = "Massimo Romanin", email = "dev@massimoromanin.com" }
 ]
 keywords = ["g2p", "text-normalization", "tts", "nlp", "phonemization"]
 classifiers = [
