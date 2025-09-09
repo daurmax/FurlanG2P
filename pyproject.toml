@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "furlang2p"
-version = "0.0.1"
+dynamic = ["version"]
 description = "FurlanG2P: a scalable, library-first G2P and text normalization toolkit (skeleton)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "FurlanG2P Team", email = "maintainers@example.com" }
+  { name = "Massimo Romanin", email = "dev@massimoromanin.com" }
 ]
 keywords = ["g2p", "text-normalization", "tts", "nlp", "phonemization"]
 classifiers = [
@@ -35,8 +35,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/furlan-g2p/FurlanG2P"
-Issues = "https://github.com/furlan-g2p/FurlanG2P/issues"
+Homepage = "https://github.com/daurmax/FurlanG2P"
+Issues = "https://github.com/daurmax/FurlanG2P/issues"
 
 [project.scripts]
 furlang2p = "furlan_g2p.cli.app:main"
@@ -65,6 +65,9 @@ warn_unused_configs = true
 minversion = "8.0"
 addopts = "-q"
 testpaths = ["tests"]
+
+[tool.hatch.version]
+path = "src/furlan_g2p/__about__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/furlan_g2p"]
