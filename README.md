@@ -1,20 +1,79 @@
 # FurlanG2P
 
-Tools and library code for converting Friulian (Furlan) text to phonemes. The
-project currently ships a small gold lexicon and a rule-based engine that powers
-an experimental `furlang2p` CLI. Other components—text normalisation,
-tokenisation, full G2P and phonology—are placeholders that raise
-`NotImplementedError`.
+Tools and library code for converting Friulian (Furlan) text to phonemes.
+The repository includes a small gold lexicon, a rule-based orthography to IPA
+converter, a normalization routine, syllabifier and stress assigner. These
+pieces back an experimental `furlang2p` CLI. Other parts of the pipeline—
+tokenisation, full G2P services and several CLI commands—remain placeholders
+that raise `NotImplementedError`.
 
 ## Project layout
 
-- `src/furlan_g2p/` – Python package with modules for normalisation,
-  tokenisation, G2P and phonology.
+- `src/furlan_g2p/cli/` – command-line interface entry points.
+- `src/furlan_g2p/g2p/` – lexicon, rules and simple converters.
+- `src/furlan_g2p/normalization/` – experimental text normalizer.
+- `src/furlan_g2p/phonology/` – canonical IPA helpers, syllabifier and stress
+  assigner.
 - `examples/` – sample inputs and outputs.
-- `scripts/` – helper scripts (future automation).
 - `docs/` – supplementary documentation and bibliography.
-- `tests/` – minimal tests ensuring modules import and stubs raise
-  `NotImplementedError`.
+- `scripts/` – helper scripts (future automation).
+- `tests/` – minimal tests covering the implemented pieces and stubs.
+
+## Quick local run (how to launch the CLI and test phrases)
+
+1. Create and activate a virtual environment:
+
+   - macOS / Linux:
+     ```bash
+     python -m venv .venv
+     source .venv/bin/activate
+     ```
+   - Windows (PowerShell):
+     ```powershell
+     python -m venv .venv
+     .\.venv\Scripts\Activate.ps1
+     ```
+   - Windows (cmd.exe):
+     ```
+     python -m venv .venv
+     .\.venv\Scripts\activate
+     ```
+
+2. Install the package in editable mode so the `furlang2p` console script becomes available:
+
+   ```bash
+   pip install -e .
+   ```
+
+3. Run the CLI and test short phrases (examples):
+
+   - Basic phonemize using the seed lexicon with rule fallback:
+     ```bash
+     furlang2p ipa "ìsule glace"
+     # -> ˈizule ˈglatʃe
+     ```
+
+   - Wrap each token in slashes:
+     ```bash
+     furlang2p ipa --with-slashes "glaç"
+     # -> /ˈglatʃ/
+     ```
+
+   - Force rule-based conversion (skip lexicon lookup):
+     ```bash
+     furlang2p ipa --rules-only "glaç"
+     # -> glatʃ
+     ```
+
+   - Use underscores as pause markers and change token separator:
+     ```bash
+     furlang2p ipa --sep '|' _ "ìsule" __
+     # -> _|ˈizule|__
+     ```
+
+   Notes:
+   - Quotes around the phrase are recommended to preserve spacing and punctuation.
+   - The CLI is experimental; some commands (`normalize`, `g2p`, `phonemize-csv`) are stubs that raise `NotImplementedError`.
 
 ## Building
 
