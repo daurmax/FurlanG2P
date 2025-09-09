@@ -21,6 +21,16 @@ Reference checks:
   bibliography in `docs/references.md` to ensure modifications align with the
   cited sources.
 
+Documentation:
+
+- `README.md` targets GitHub contributors. It should describe the repository
+  layout, how to build distributions, how to run the test suite, and which
+  sources form the project's basis of truth.
+- `README-pypi.md` targets end users on PyPI. It should focus on installation
+  and usage examples.
+- When a change affects user-facing behaviour or packaging, update the
+  appropriate README(s) to keep them in sync.
+
 Coding standards:
 
 - Type hints everywhere.
