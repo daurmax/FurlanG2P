@@ -1,10 +1,23 @@
 # FurlanG2P
 
-Tools and library code for converting Friulian (Furlan) text to phonemes. The
-project ships a small gold lexicon and a rule-based engine that together provide
-an experimental ``ipa`` command-line tool. Other pieces of the pipeline – text
-normalisation, tokenisation, full G2P and phonology – are present as skeletons
-and currently raise ``NotImplementedError``.
+Tools and library code for converting Friulian (Furlan) text to phonemes.
+The repository includes a small gold lexicon, a rule-based orthography to IPA
+converter, a normalization routine, syllabifier and stress assigner. These
+pieces back an experimental `furlang2p` CLI. Other parts of the pipeline—
+tokenisation, full G2P services and several CLI commands—remain placeholders
+that raise `NotImplementedError`.
+
+## Project layout
+
+- `src/furlan_g2p/cli/` – command-line interface entry points.
+- `src/furlan_g2p/g2p/` – lexicon, rules and simple converters.
+- `src/furlan_g2p/normalization/` – experimental text normalizer.
+- `src/furlan_g2p/phonology/` – canonical IPA helpers, syllabifier and stress
+  assigner.
+- `examples/` – sample inputs and outputs.
+- `docs/` – supplementary documentation and bibliography.
+- `scripts/` – helper scripts (future automation).
+- `tests/` – minimal tests covering the implemented pieces and stubs.
 
 ## Quick local run (how to launch the CLI and test phrases)
 
@@ -37,7 +50,6 @@ and currently raise ``NotImplementedError``.
    - Basic phonemize using the seed lexicon with rule fallback:
      ```bash
      furlang2p ipa "ìsule glace"
-     # Example output:
      # -> ˈizule ˈglatʃe
      ```
 
@@ -61,71 +73,41 @@ and currently raise ``NotImplementedError``.
 
    Notes:
    - Quotes around the phrase are recommended to preserve spacing and punctuation.
-   - The CLI is experimental; some commands (normalize, g2p, phonemize-csv) are stubs that raise NotImplementedError.
+   - The CLI is experimental; some commands (`normalize`, `g2p`, `phonemize-csv`) are stubs that raise `NotImplementedError`.
 
-## Installation
+## Building
 
-### From PyPI
+The project uses [Hatchling](https://hatch.pypa.io/) as build backend.
+Create source and wheel distributions with:
 
 ```bash
-pip install furlang2p
+python -m build
 ```
 
-### From source
-
-1. Create and activate a virtual environment (see Quick local run above).
-
-2. Install the project in editable mode:
-
-   ```bash
-   pip install -e .
-   ```
-
-3. (Optional) Add development tools for linting, typing and tests:
-
-   ```bash
-   pip install -e .[dev]
-   ```
-
-## Usage
-
-The package exposes a ``furlang2p`` CLI. At present only the experimental
-``ipa`` subcommand does real work; the ``normalize``, ``g2p`` and
-``phonemize-csv`` commands are stubs that abort with ``NotImplementedError``.
-
-Run `furlang2p --help` or `furlang2p ipa --help` for full details about options.
-
-## Development
-
-Run the following checks before committing code:
+For local development install the package in editable mode along with
+optional tooling:
 
 ```bash
-isort .
-black .
+pip install -e .[dev]
+```
+
+## Testing
+
+Before submitting changes, run the quality and test suite:
+
+```bash
 ruff check .
-mypy src
-pytest -q
+black --check .
+mypy .
+pytest
 ```
-
-## VS Code integration
-
-A ``.vscode/tasks.json`` file provides shortcuts for common actions:
-
-- **Install dependencies** – ``pip install -e .[dev]``
-- **Format** – run ``isort`` and ``black``
-- **Lint** – run ``ruff``
-- **Type check** – run ``mypy`` on ``src``
-- **Test** – execute ``pytest -q``
-
-From VS Code press ``Ctrl+Shift+B`` or run *Tasks: Run Task* from the Command
-Palette and choose the desired action.
 
 ## References
 
-This project draws on published descriptions of Friulian orthography and
-phonology as well as lemma-level IPA transcriptions. A curated bibliography with
-live and archived links is maintained in
-[docs/references.md](docs/references.md).
+FurlanG2P follows published descriptions of Friulian orthography and
+phonology as well as lemma-level IPA transcriptions. A curated bibliography is
+available in [docs/references.md](docs/references.md); consult it when modifying
+rules, lexicon entries or phonological behaviour.
 
 ## Contributing
 
