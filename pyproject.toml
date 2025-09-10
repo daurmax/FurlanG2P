@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "FurlanG2P: a scalable, library-first G2P and text normalization toolkit (skeleton)."
 readme = { file = "README-pypi.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 authors = [
   { name = "Massimo Romanin", email = "dev@massimoromanin.com" }
 ]
@@ -16,7 +16,8 @@ keywords = ["g2p", "text-normalization", "tts", "nlp", "phonemization"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "License :: OSI Approved :: MIT License",
+  "License :: Free for non-commercial use",
+  "License :: Other/Proprietary License",
   "Operating System :: OS Independent",
 ]
 dependencies = [

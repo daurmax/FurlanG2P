@@ -113,3 +113,7 @@ rules, lexicon entries or phonological behaviour.
 
 Pull requests that flesh out the skeleton or expand test coverage are welcome.
 Please open an issue to discuss major changes.
+
+## License
+
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](LICENSE).
