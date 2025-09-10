@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any, TypeVar, cast
 
-from hypothesis import given as _given
-from hypothesis import strategies as st
+from hypothesis import given as _given  # type: ignore[import-not-found,unused-ignore]
+from hypothesis import strategies as st  # type: ignore[import-not-found,unused-ignore]
 
 from furlan_g2p.g2p.rules import PhonemeRules
 from furlan_g2p.phonology import PHONEME_INVENTORY

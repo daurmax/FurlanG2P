@@ -8,9 +8,8 @@ handling, a syllabifier with basic Friulian phonotactics, a stress assigner that
 accounts for long vowels and marked accents, and an IPA canonicalizer. The
 normalizer can spell out numbers up to 999 999 999 999 and expand units,
 abbreviations and acronyms, with rules loadable from JSON or YAML files. These
-pieces back an experimental `furlang2p` CLI. Other parts of the pipeline—full
-G2P services and several CLI commands—remain placeholders that raise
-`NotImplementedError`.
+pieces back an experimental `furlang2p` CLI with subcommands for normalization,
+G2P conversion and batch phonemization of CSV files.
 
 ## Project layout
 
@@ -22,7 +21,7 @@ G2P services and several CLI commands—remain placeholders that raise
   assigner.
 - `examples/` – sample inputs and outputs.
 - `docs/` – supplementary documentation and bibliography.
-- `scripts/` – helper scripts (future automation).
+- `scripts/` – helper scripts (e.g. `generate_phonemes.py` for CSV batch runs).
 - `tests/` – minimal tests covering the implemented pieces and stubs.
 
 ## Quick local run (how to launch the CLI and test phrases)
@@ -77,9 +76,33 @@ G2P services and several CLI commands—remain placeholders that raise
      # -> _|ˈizule|__
      ```
 
+   Other implemented subcommands:
+
+   - Normalize text and expand numbers/abbreviations:
+     ```bash
+     furlang2p normalize "CJASE 1964 kg"
+     # -> cjase mil nûfcent e sessantecuatri chilogram
+     ```
+
+   - Convert text to a phoneme sequence:
+     ```bash
+     furlang2p g2p "Cjase"
+     # -> ˈc a z e
+     ```
+
+   - Phonemize an LJSpeech-style CSV:
+     ```bash
+     furlang2p phonemize-csv --in metadata.csv --out out.csv
+     ```
+
+   The same batch operation is available as a standalone script:
+
+   ```bash
+   python scripts/generate_phonemes.py --in metadata.csv --out out.csv
+   ```
+
    Notes:
    - Quotes around the phrase are recommended to preserve spacing and punctuation.
-   - The CLI is experimental; some commands (`normalize`, `g2p`, `phonemize-csv`) are stubs that raise `NotImplementedError`.
 
 ### Loading normalizer configuration
 

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import sys
+from pathlib import Path
 
 import click
 
@@ -10,11 +12,13 @@ from ..g2p.lexicon import Lexicon
 from ..g2p.rule_engine import RuleEngine
 from ..normalization.experimental_normalizer import ExperimentalNormalizer
 from ..phonology import canonicalize_ipa
+from ..services.io_service import IOService
 from ..services.pipeline import PipelineService
 
 _NORMALIZER = ExperimentalNormalizer()
 _LEXICON = Lexicon.load_seed()
 _RULES = RuleEngine()
+_IO = IOService()
 
 
 def _split_apostrophes(token: str) -> list[str]:
@@ -47,21 +51,78 @@ def cli() -> None:
 
 
 @cli.command("normalize")
+@click.option("--in", "inp", type=click.Path(exists=True, dir_okay=False), help="Input text file.")
+@click.option(
+    "--out",
+    "out",
+    type=click.Path(dir_okay=False),
+    help="Write output to file instead of stdout.",
+)
+@click.option(
+    "--format",
+    "fmt",
+    type=click.Choice(["plain", "json"]),
+    default="plain",
+    show_default=True,
+    help="Output format.",
+)
 @click.argument("text", nargs=-1)
-def cmd_normalize(text: tuple[str, ...]) -> None:
-    """Normalize text and print it."""
-    PipelineService()
-    _ = " ".join(text)
-    raise NotImplementedError("normalize command is not implemented yet.")
+def cmd_normalize(inp: str | None, out: str | None, fmt: str, text: tuple[str, ...]) -> None:
+    """Normalize ``text`` and emit the result."""
+
+    if inp and text:
+        raise click.UsageError("Provide either TEXT or --in, not both")
+    if not inp and not text:
+        raise click.UsageError("No input provided")
+
+    service = PipelineService()
+    raw = _IO.read_text(inp) if inp else " ".join(text)
+    norm = service.normalizer.normalize(raw)
+    out_data = json.dumps({"normalized": norm}, ensure_ascii=False) if fmt == "json" else norm
+    if out:
+        _IO.write_text(out, out_data)
+    else:
+        click.echo(out_data)
 
 
 @cli.command("g2p")
+@click.option("--in", "inp", type=click.Path(exists=True, dir_okay=False), help="Input text file.")
+@click.option(
+    "--out",
+    "out",
+    type=click.Path(dir_okay=False),
+    help="Write output to file instead of stdout.",
+)
+@click.option(
+    "--format",
+    "fmt",
+    type=click.Choice(["plain", "json"]),
+    default="plain",
+    show_default=True,
+    help="Output format.",
+)
+@click.option("--sep", default=" ", show_default=True, help="Phoneme separator for plain format.")
 @click.argument("text", nargs=-1)
-def cmd_g2p(text: tuple[str, ...]) -> None:
-    """Convert text to phonemes and print them."""
-    PipelineService()
-    _ = " ".join(text)
-    raise NotImplementedError("g2p command is not implemented yet.")
+def cmd_g2p(inp: str | None, out: str | None, fmt: str, sep: str, text: tuple[str, ...]) -> None:
+    """Convert ``text`` to a phoneme sequence."""
+
+    if inp and text:
+        raise click.UsageError("Provide either TEXT or --in, not both")
+    if not inp and not text:
+        raise click.UsageError("No input provided")
+
+    service = PipelineService()
+    raw = _IO.read_text(inp) if inp else " ".join(text)
+    norm, phons = service.process_text(raw)
+    out_data = (
+        json.dumps({"normalized": norm, "phonemes": phons}, ensure_ascii=False)
+        if fmt == "json"
+        else sep.join(phons)
+    )
+    if out:
+        _IO.write_text(out, out_data)
+    else:
+        click.echo(out_data)
 
 
 @cli.command("phonemize-csv")
@@ -69,9 +130,15 @@ def cmd_g2p(text: tuple[str, ...]) -> None:
 @click.option("--out", "out", required=True, help="Output CSV with phonemes added.")
 @click.option("--delim", "delim", default="|", show_default=True, help="CSV delimiter.")
 def cmd_phonemize_csv(inp: str, out: str, delim: str) -> None:
-    """Batch phonemize an LJSpeech-like CSV file."""
-    PipelineService()
-    raise NotImplementedError("phonemize-csv command is not implemented yet.")
+    """Batch phonemize an LJSpeech-style CSV file."""
+
+    service = PipelineService()
+    try:
+        service.process_csv(inp, out, delimiter=delim)
+    except FileNotFoundError as e:  # pragma: no cover - simple passthrough
+        raise click.FileError(str(Path(e.filename))) from e
+    except Exception as e:  # pragma: no cover - generic error
+        raise click.ClickException(str(e)) from e
 
 
 @cli.command(
