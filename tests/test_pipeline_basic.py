@@ -44,6 +44,9 @@ def test_pipeline_basic() -> None:
     norm2, phons2 = pipe.process_text("Orele")
     assert norm2 == "orele"
     assert phons2 == ["o", "ˈr", "e", "l", "e"]
+    norm3, phons3 = pipe.process_text("Patî")
+    assert norm3 == "patî"
+    assert phons3 == ["p", "a", "ˈt", "iː"]
 
 
 def test_io_service(tmp_path) -> None:  # type: ignore[no-untyped-def]

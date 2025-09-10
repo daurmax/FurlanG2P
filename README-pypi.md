@@ -2,12 +2,13 @@
 
 Utilities for converting Friulian (Furlan) text to phonemes. The package
 includes a tiny gold lexicon with variant transcriptions, a dialect-aware
-letter‑to‑sound rule engine, a configurable normalization routine and a
-sentence/word tokenizer that together provide an experimental `furlang2p`
-command-line tool. The normalizer spells out numbers up to 999 999 999 999 and
-can expand units, abbreviations and acronyms, with rules loaded from JSON or
-YAML files, while the tokenizer can skip sentence splits after configurable
-abbreviations.
+letter‑to‑sound rule engine, a configurable normalization routine, a
+sentence/word tokenizer, a syllabifier with basic phonotactics, a stress
+assigner aware of long vowels and accent marks, and an IPA canonicalizer that
+together provide an experimental `furlang2p` command-line tool. The normalizer
+spells out numbers up to 999 999 999 999 and can expand units, abbreviations and
+acronyms, with rules loaded from JSON or YAML files, while the tokenizer can
+skip sentence splits after configurable abbreviations.
 
 ## Installation
 
