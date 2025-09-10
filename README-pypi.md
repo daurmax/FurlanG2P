@@ -60,3 +60,7 @@ print(ipa)
 
 - Source code and issue tracker: https://github.com/daurmax/FurlanG2P
 - Bibliography and references: https://github.com/daurmax/FurlanG2P/blob/main/docs/references.md
+
+## License
+
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](https://github.com/daurmax/FurlanG2P/blob/main/LICENSE).
