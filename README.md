@@ -3,8 +3,8 @@
 Tools and library code for converting Friulian (Furlan) text to phonemes.
 The repository includes a small gold lexicon, a rule-based orthography to IPA
 converter, a configurable normalization routine, syllabifier and stress
-assigner. The normalizer now supports basic expansion of numbers, units,
-abbreviations and acronyms, and its rules can be loaded from JSON or YAML
+assigner. The normalizer can spell out numbers up to 999 999 999 999 and expand
+units, abbreviations and acronyms, with rules loadable from JSON or YAML
 files. These pieces back an experimental `furlang2p` CLI. Other parts of the
 pipeline—tokenisation, full G2P services and several CLI commands—remain
 placeholders that raise `NotImplementedError`.
@@ -88,8 +88,8 @@ from furlan_g2p.normalization.normalizer import Normalizer
 
 cfg = load_normalizer_config("norm_rules.yml")
 norm = Normalizer(cfg)
-print(norm.normalize("10 kg"))
-# -> dîs chilogram
+print(norm.normalize("1964 kg"))
+# -> mil nûfcent e sessantecuatri chilogram
 ```
 
 ## Building

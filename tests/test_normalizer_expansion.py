@@ -22,6 +22,12 @@ def test_basic_expansions() -> None:
     assert norm.normalize("2 kg, Sig. SOS") == "doi chilogram _ siôr __ esse o esse"
 
 
+def test_number_spellout() -> None:
+    norm = Normalizer()
+    assert norm.normalize("2004") == "doi mil e cuatri"
+    assert norm.normalize("1964") == "mil nûfcent e sessantecuatri"
+
+
 def test_load_config_json(tmp_path: Path) -> None:
     data = {
         "numbers_map": {"3": "trê"},
