@@ -73,6 +73,9 @@ conversion:
 python scripts/generate_phonemes.py --in metadata.csv --out out.csv
 ```
 
+All subcommands validate inputs and emit clear error messages for missing
+files or conflicting arguments.
+
 ## Python usage
 
 The same components can be invoked programmatically:

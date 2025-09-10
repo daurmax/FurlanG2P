@@ -162,6 +162,10 @@ mypy .
 pytest
 ```
 
+The test suite exercises the CLI, covers regression "golden" sets under
+`tests/data/` and performs end‑to‑end checks of the full pipeline.  New
+features should extend these tests to guard against behavioural regressions.
+
 ## References
 
 FurlanG2P follows published descriptions of Friulian orthography and
