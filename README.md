@@ -2,18 +2,20 @@
 
 Tools and library code for converting Friulian (Furlan) text to phonemes.
 The repository includes a small gold lexicon, a rule-based orthography to IPA
-converter, a configurable normalization routine, syllabifier and stress
-assigner. The normalizer can spell out numbers up to 999 999 999 999 and expand
-units, abbreviations and acronyms, with rules loadable from JSON or YAML
-files. These pieces back an experimental `furlang2p` CLI. Other parts of the
-pipeline—tokenisation, full G2P services and several CLI commands—remain
-placeholders that raise `NotImplementedError`.
+converter, a configurable normalization routine, a sentence/word tokenizer with
+abbreviation handling, and simple syllabifier and stress assigner. The
+normalizer can spell out numbers up to 999 999 999 999 and expand units,
+abbreviations and acronyms, with rules loadable from JSON or YAML files. These
+pieces back an experimental `furlang2p` CLI. Other parts of the pipeline—full
+G2P services and several CLI commands—remain placeholders that raise
+`NotImplementedError`.
 
 ## Project layout
 
 - `src/furlan_g2p/cli/` – command-line interface entry points.
 - `src/furlan_g2p/g2p/` – lexicon, rules and simple converters.
 - `src/furlan_g2p/normalization/` – configurable text normalizer.
+- `src/furlan_g2p/tokenization/` – sentence and word tokenizer.
 - `src/furlan_g2p/phonology/` – canonical IPA helpers, syllabifier and stress
   assigner.
 - `examples/` – sample inputs and outputs.
@@ -90,6 +92,22 @@ cfg = load_normalizer_config("norm_rules.yml")
 norm = Normalizer(cfg)
 print(norm.normalize("1964 kg"))
 # -> mil nûfcent e sessantecuatri chilogram
+```
+
+### Loading tokenizer configuration
+
+Sentence splitting can be customised by listing abbreviations that should not
+end a sentence.  The list is read from JSON or YAML into a
+``TokenizerConfig``:
+
+```python
+from furlan_g2p.config import load_tokenizer_config
+from furlan_g2p.tokenization import Tokenizer
+
+cfg = load_tokenizer_config("tok_rules.yml")  # {"abbrev_no_split": ["sig"]}
+tok = Tokenizer(cfg)
+print(tok.split_sentences("Al è rivât il Sig. Bepo. O ven?"))
+# -> ['Al è rivât il Sig. Bepo.', 'O ven?']
 ```
 
 ## Building

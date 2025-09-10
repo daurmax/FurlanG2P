@@ -1,11 +1,12 @@
 # FurlanG2P
 
 Utilities for converting Friulian (Furlan) text to phonemes. The package
-includes a tiny gold lexicon, a rule-based engine and a configurable
-normalization routine that together provide an experimental `furlang2p`
-command-line tool. The normalizer spells out numbers up to 999 999 999 999 and
-can expand units, abbreviations and acronyms, with rules loaded from JSON or
-YAML files.
+includes a tiny gold lexicon, a rule-based engine, a configurable normalization
+routine and a sentence/word tokenizer that together provide an experimental
+`furlang2p` command-line tool. The normalizer spells out numbers up to
+999 999 999 999 and can expand units, abbreviations and acronyms, with rules
+loaded from JSON or YAML files, while the tokenizer can skip sentence splits
+after configurable abbreviations.
 
 ## Installation
 

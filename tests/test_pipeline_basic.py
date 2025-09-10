@@ -20,7 +20,7 @@ def test_tokenizer_basic() -> None:
     tok = Tokenizer()
     assert tok.split_sentences("A. B!") == ["A.", "B!"]
     assert tok.split_words("Bêle cjase!") == ["bêle", "cjase"]
-    assert tok.split_words("L’orele e biele") == ["l’orele", "e", "biele"]
+    assert tok.split_words("L’orele e biele") == ["l'orele", "e", "biele"]
 
 
 def test_g2p_basic() -> None:
