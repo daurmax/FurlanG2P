@@ -1,8 +1,10 @@
 # FurlanG2P
 
 Utilities for converting Friulian (Furlan) text to phonemes. The package
-includes a tiny gold lexicon and a rule-based engine that together provide an
-experimental `furlang2p` command-line tool.
+includes a tiny gold lexicon, a rule-based engine and a configurable
+normalization routine that together provide an experimental `furlang2p`
+command-line tool. The normalizer can expand numbers, units, abbreviations and
+acronyms, with rules loaded from JSON or YAML files.
 
 ## Installation
 

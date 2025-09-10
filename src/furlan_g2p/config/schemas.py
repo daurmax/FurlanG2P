@@ -11,6 +11,8 @@ class NormalizerConfig:
 
     units_map: dict[str, str] = field(default_factory=dict)
     acronyms_map: dict[str, str] = field(default_factory=dict)
+    abbreviations_map: dict[str, str] = field(default_factory=dict)
+    numbers_map: dict[str, str] = field(default_factory=dict)
     ordinal_map: dict[str, str] = field(default_factory=dict)
     pause_short: str = "_"
     pause_long: str = "__"

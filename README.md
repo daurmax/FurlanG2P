@@ -2,16 +2,18 @@
 
 Tools and library code for converting Friulian (Furlan) text to phonemes.
 The repository includes a small gold lexicon, a rule-based orthography to IPA
-converter, a normalization routine, syllabifier and stress assigner. These
-pieces back an experimental `furlang2p` CLI. Other parts of the pipeline—
-tokenisation, full G2P services and several CLI commands—remain placeholders
-that raise `NotImplementedError`.
+converter, a configurable normalization routine, syllabifier and stress
+assigner. The normalizer now supports basic expansion of numbers, units,
+abbreviations and acronyms, and its rules can be loaded from JSON or YAML
+files. These pieces back an experimental `furlang2p` CLI. Other parts of the
+pipeline—tokenisation, full G2P services and several CLI commands—remain
+placeholders that raise `NotImplementedError`.
 
 ## Project layout
 
 - `src/furlan_g2p/cli/` – command-line interface entry points.
 - `src/furlan_g2p/g2p/` – lexicon, rules and simple converters.
-- `src/furlan_g2p/normalization/` – experimental text normalizer.
+- `src/furlan_g2p/normalization/` – configurable text normalizer.
 - `src/furlan_g2p/phonology/` – canonical IPA helpers, syllabifier and stress
   assigner.
 - `examples/` – sample inputs and outputs.
@@ -74,6 +76,21 @@ that raise `NotImplementedError`.
    Notes:
    - Quotes around the phrase are recommended to preserve spacing and punctuation.
    - The CLI is experimental; some commands (`normalize`, `g2p`, `phonemize-csv`) are stubs that raise `NotImplementedError`.
+
+### Loading normalizer configuration
+
+Normalization rules can be customised via external JSON or YAML files. A helper
+utility loads the file into a :class:`NormalizerConfig` dataclass:
+
+```python
+from furlan_g2p.config import load_normalizer_config
+from furlan_g2p.normalization.normalizer import Normalizer
+
+cfg = load_normalizer_config("norm_rules.yml")
+norm = Normalizer(cfg)
+print(norm.normalize("10 kg"))
+# -> dîs chilogram
+```
 
 ## Building
 
