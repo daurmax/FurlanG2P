@@ -40,3 +40,7 @@
 
 - Wiktionary. *Category: Friulian terms with IPA pronunciation*. [https://en.wiktionary.org/wiki/Category:Friulian_terms_with_IPA_pronunciation](https://en.wiktionary.org/wiki/Category:Friulian_terms_with_IPA_pronunciation) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/Category:Friulian_terms_with_IPA_pronunciation)).
 
+## Numbers and abbreviations
+
+- Wiktionary. *Category: Friulian cardinal numbers*. [https://en.wiktionary.org/wiki/Category:Friulian_cardinal_numbers](https://en.wiktionary.org/wiki/Category:Friulian_cardinal_numbers) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/Category:Friulian_cardinal_numbers)).
+

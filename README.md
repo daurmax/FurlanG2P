@@ -135,6 +135,24 @@ print(tok.split_sentences("Al è rivât il Sig. Bepo. O ven?"))
 # -> ['Al è rivât il Sig. Bepo.', 'O ven?']
 ```
 
+### Pipeline service
+
+For end‑to‑end processing, instantiate :class:`PipelineService` to chain
+normalisation, tokenisation, grapheme‑to‑phoneme conversion and basic
+phonology:
+
+```python
+from furlan_g2p.services import PipelineService
+
+pipe = PipelineService()
+norm, phonemes = pipe.process_text("Cjase")
+print(norm)      # cjase
+print(phonemes)  # ['ˈc', 'a', 'z', 'e']
+```
+
+The same service exposes ``process_csv`` to phonemise LJSpeech‑style metadata
+files.
+
 ## Building
 
 The project uses [Hatchling](https://hatch.pypa.io/) as build backend.
@@ -165,6 +183,14 @@ pytest
 The test suite exercises the CLI, covers regression "golden" sets under
 `tests/data/` and performs end‑to‑end checks of the full pipeline.  New
 features should extend these tests to guard against behavioural regressions.
+
+## CI/CD
+
+Continuous integration and release workflows live under
+``.github/workflows/``.  ``ci.yml`` runs formatting, type checks and tests on
+every push and pull request, while ``release.yml`` bumps the package version,
+builds distributions with Hatch and publishes them to PyPI when changes land on
+``main``.
 
 ## References
 

@@ -78,20 +78,30 @@ files or conflicting arguments.
 
 ## Python usage
 
-The same components can be invoked programmatically:
+Invoke the full pipeline programmatically:
 
 ```python
-from furlan_g2p.g2p.lexicon import Lexicon
-from furlan_g2p.g2p.rule_engine import RuleEngine
-from furlan_g2p.phonology import canonicalize_ipa
+from furlan_g2p.services import PipelineService
 
-lex = Lexicon.load_seed()
-rules = RuleEngine()
-word = "glaç"
-ipa = lex.get(word) or canonicalize_ipa(rules.convert(word))
-print(ipa)
-# -> ˈglatʃ
+pipe = PipelineService()
+norm, phonemes = pipe.process_text("Cjase")
+print(norm)                   # cjase
+print(" ".join(phonemes))     # ˈc a z e
 ```
+
+Normalisation rules can be customised via external JSON or YAML files:
+
+```python
+from furlan_g2p.config import load_normalizer_config
+from furlan_g2p.normalization import Normalizer
+
+cfg = load_normalizer_config("norm_rules.yml")
+print(Normalizer(cfg).normalize("1964 kg"))
+# -> mil nûfcent e sessantecuatri chilogram
+```
+
+Lower-level components such as the lexicon and rule engine remain available for
+fine-grained control.
 
 ## Project links
 

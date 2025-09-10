@@ -1,8 +1,8 @@
 Examples
+========
 
-This folder will contain runnable examples once the core logic is implemented.
-For now, see the CLI help:
+Small scripts demonstrating the public API. Run them after installing the
+package or by setting ``PYTHONPATH=src`` in the repository root.
 
-```
-furlang2p --help
-```
+- ``pipeline_example.py`` – normalises and phonemises a short phrase using the
+  :class:`PipelineService`.
