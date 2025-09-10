@@ -1,14 +1,14 @@
 # FurlanG2P
 
-Tools and library code for converting Friulian (Furlan) text to phonemes.
-The repository includes a small gold lexicon, a rule-based orthography to IPA
-converter, a configurable normalization routine, a sentence/word tokenizer with
-abbreviation handling, and simple syllabifier and stress assigner. The
-normalizer can spell out numbers up to 999 999 999 999 and expand units,
-abbreviations and acronyms, with rules loadable from JSON or YAML files. These
-pieces back an experimental `furlang2p` CLI. Other parts of the pipeline—full
-G2P services and several CLI commands—remain placeholders that raise
-`NotImplementedError`.
+Tools and library code for converting Friulian (Furlan) text to phonemes.  The
+repository includes a small gold lexicon with IPA variants, a dialect-aware
+letter‑to‑sound rule engine backed by a curated phoneme inventory, a
+configurable normalization routine, a sentence/word tokenizer with abbreviation
+handling, and simple syllabifier and stress assigner. The normalizer can spell
+out numbers up to 999 999 999 999 and expand units, abbreviations and acronyms,
+with rules loadable from JSON or YAML files. These pieces back an experimental
+`furlang2p` CLI. Other parts of the pipeline—full G2P services and several CLI
+commands—remain placeholders that raise `NotImplementedError`.
 
 ## Project layout
 
