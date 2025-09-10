@@ -1,4 +1,8 @@
-"""Canonical phoneme inventory used by FurlanG2P."""
+"""Canonical phoneme inventory used by FurlanG2P.
+
+The list is based on descriptions by ARLeF and Miotti (2002) as catalogued in
+``docs/references.md``.
+"""
 
 from __future__ import annotations
 
@@ -34,8 +38,12 @@ PHONEME_INVENTORY: list[str] = [
     "n",
     "ɲ",
     "j",
-    # affricate
+    "ʎ",
+    # affricates
     "tʃ",
+    "dʒ",
+    "dz",
+    "ts",
     # pauses
     "_",
     "__",

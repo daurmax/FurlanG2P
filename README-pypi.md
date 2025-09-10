@@ -1,8 +1,16 @@
 # FurlanG2P
 
 Utilities for converting Friulian (Furlan) text to phonemes. The package
-includes a tiny gold lexicon and a rule-based engine that together provide an
-experimental `furlang2p` command-line tool.
+includes a tiny gold lexicon with variant transcriptions, a dialect-aware
+letter‑to‑sound rule engine, a configurable normalization routine, a
+sentence/word tokenizer, a syllabifier with basic phonotactics, a stress
+assigner aware of long vowels and accent marks, and an IPA canonicalizer that
+together provide an experimental `furlang2p` command-line tool. The normalizer
+spells out numbers up to 999 999 999 999 and can expand units, abbreviations and
+acronyms, with rules loaded from JSON or YAML files, while the tokenizer can
+skip sentence splits after configurable abbreviations.  The CLI also offers
+subcommands to normalize text, output phoneme sequences and batch phonemize
+metadata CSV files.
 
 ## Installation
 
@@ -36,25 +44,64 @@ furlang2p ipa --sep '|' _ "ìsule" __
 # -> _|ˈizule|__
 ```
 
-Other subcommands (`normalize`, `g2p`, `phonemize-csv`) are stubs and currently
-raise `NotImplementedError`.
+Other available subcommands:
+
+- Normalize and expand numbers/abbreviations:
+
+  ```bash
+  furlang2p normalize "CJASE 1964 kg"
+  # -> cjase mil nûfcent e sessantecuatri chilogram
+  ```
+
+- Convert a phrase to phonemes:
+
+  ```bash
+  furlang2p g2p "Cjase"
+  # -> ˈc a z e
+  ```
+
+- Phonemize a metadata CSV:
+
+  ```bash
+  furlang2p phonemize-csv --in metadata.csv --out out.csv
+  ```
+
+The repository also ships a convenience script providing the same batch
+conversion:
+
+```bash
+python scripts/generate_phonemes.py --in metadata.csv --out out.csv
+```
+
+All subcommands validate inputs and emit clear error messages for missing
+files or conflicting arguments.
 
 ## Python usage
 
-The same components can be invoked programmatically:
+Invoke the full pipeline programmatically:
 
 ```python
-from furlan_g2p.g2p.lexicon import Lexicon
-from furlan_g2p.g2p.rule_engine import RuleEngine
-from furlan_g2p.phonology import canonicalize_ipa
+from furlan_g2p.services import PipelineService
 
-lex = Lexicon.load_seed()
-rules = RuleEngine()
-word = "glaç"
-ipa = lex.get(word) or canonicalize_ipa(rules.convert(word))
-print(ipa)
-# -> ˈglatʃ
+pipe = PipelineService()
+norm, phonemes = pipe.process_text("Cjase")
+print(norm)                   # cjase
+print(" ".join(phonemes))     # ˈc a z e
 ```
+
+Normalisation rules can be customised via external JSON or YAML files:
+
+```python
+from furlan_g2p.config import load_normalizer_config
+from furlan_g2p.normalization import Normalizer
+
+cfg = load_normalizer_config("norm_rules.yml")
+print(Normalizer(cfg).normalize("1964 kg"))
+# -> mil nûfcent e sessantecuatri chilogram
+```
+
+Lower-level components such as the lexicon and rule engine remain available for
+fine-grained control.
 
 ## Project links
 

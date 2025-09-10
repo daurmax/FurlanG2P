@@ -31,10 +31,16 @@
 - pît — [Wiktionary](https://en.wiktionary.org/wiki/p%C3%AEt) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/p%C3%AEt)).
 - mûr — [Wiktionary](https://en.wiktionary.org/wiki/m%C3%BBr) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/m%C3%BBr)).
 - côr — [Wiktionary](https://en.wiktionary.org/wiki/c%C3%B4r) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/c%C3%B4r)).
+- gjat — [Wiktionary](https://en.wiktionary.org/wiki/gjat) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/gjat)).
+- zûc — [Wiktionary](https://en.wiktionary.org/wiki/z%C3%BBc) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/z%C3%BBc)).
 - cjase — [Wiktionary](https://en.wiktionary.org/wiki/cjase) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/cjase)).
 - cjandele — [Wiktionary](https://en.wiktionary.org/wiki/cjandele) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/cjandele)).
 
 ## Other
 
 - Wiktionary. *Category: Friulian terms with IPA pronunciation*. [https://en.wiktionary.org/wiki/Category:Friulian_terms_with_IPA_pronunciation](https://en.wiktionary.org/wiki/Category:Friulian_terms_with_IPA_pronunciation) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/Category:Friulian_terms_with_IPA_pronunciation)).
+
+## Numbers and abbreviations
+
+- Wiktionary. *Category: Friulian cardinal numbers*. [https://en.wiktionary.org/wiki/Category:Friulian_cardinal_numbers](https://en.wiktionary.org/wiki/Category:Friulian_cardinal_numbers) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/Category:Friulian_cardinal_numbers)).
 
