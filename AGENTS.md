@@ -32,6 +32,8 @@ Documentation:
   and usage examples.
 - When a change affects user-facing behaviour or packaging, update the
   appropriate README(s) to keep them in sync.
+- Review and update files under `docs/` (e.g., module overviews) when business
+  logic or interfaces change.
 
 Coding standards:
 

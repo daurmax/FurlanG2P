@@ -19,6 +19,26 @@ that raise `NotImplementedError`.
 - `scripts/` – helper scripts (future automation).
 - `tests/` – minimal tests covering the implemented pieces and stubs.
 
+See [docs/project_structure.md](docs/project_structure.md) for a full module
+overview and development roadmap.
+
+## Business logic overview
+
+The project is organised into focused modules:
+
+- **Normalization** – lowercases text and collapses whitespace. *TODO:* load
+  rule sets from configuration and expand coverage for numbers and acronyms.
+- **Tokenization** – regex-based sentence and word splitter. *TODO:* handle
+  abbreviations and preserve pause markers.
+- **G2P** – small lexicon with rule-based fallback to generate IPA strings.
+  *TODO:* implement the `PhonemeRules` engine and grow the lexicon.
+- **Phonology** – IPA canonicalization, syllabifier and stress assigner.
+  *TODO:* refine syllabification and stress rules.
+- **Services** – pipeline and file I/O helpers. *TODO:* expose dependency
+  injection and batch utilities.
+- **CLI** – user-facing commands; only `ipa` is functional. *TODO:* implement
+  `normalize`, `g2p` and `phonemize-csv` subcommands.
+
 ## Quick local run (how to launch the CLI and test phrases)
 
 1. Create and activate a virtual environment:
