@@ -7,7 +7,7 @@ considered gold.
 
 ## Rule order
 
-The experimental rule engine applies rules from longest to shortest context:
+The rule engine applies rules from longest to shortest context:
 
 1. `cj` → `c` and `gj` → `ɟ` (palatal stops). [ARLeF – GRAFIE]
 2. `ch`/`gh` harden `c`/`g` before front vowels. [ARLeF – GRAFIE]

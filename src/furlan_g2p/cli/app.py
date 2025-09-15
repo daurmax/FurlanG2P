@@ -9,15 +9,17 @@ from pathlib import Path
 import click
 
 from ..g2p.lexicon import Lexicon
-from ..g2p.rule_engine import RuleEngine
-from ..normalization.experimental_normalizer import ExperimentalNormalizer
+from ..g2p.rules import PhonemeRules
+from ..normalization.normalizer import Normalizer
 from ..phonology import canonicalize_ipa
 from ..services.io_service import IOService
 from ..services.pipeline import PipelineService
+from ..tokenization.tokenizer import Tokenizer
 
-_NORMALIZER = ExperimentalNormalizer()
+_NORMALIZER = Normalizer()
 _LEXICON = Lexicon.load_seed()
-_RULES = RuleEngine()
+_RULES = PhonemeRules()
+_TOKENIZER = Tokenizer()
 _IO = IOService()
 
 
@@ -143,7 +145,7 @@ def cmd_phonemize_csv(inp: str, out: str, delim: str) -> None:
 
 @cli.command(
     "ipa",
-    help="[experimental] Convert text to IPA using the seed lexicon and rule-based fallback.",
+    help="Convert text to IPA using the seed lexicon and rule-based fallback.",
 )
 @click.option(
     "--rules-only",
@@ -169,15 +171,13 @@ def cmd_ipa(
     with_slashes: bool,
     sep: str,
 ) -> None:
-    """Phonemize ``text`` using experimental components."""
+    """Phonemize ``text`` using the stable pipeline components."""
 
     raw_sentence = " ".join(text)
+    norm = _NORMALIZER.normalize(raw_sentence)
     tokens: list[str] = []
-    for raw in raw_sentence.split():
-        if _is_pause(raw):
-            tokens.append(raw)
-            continue
-        tokens.extend(_NORMALIZER.normalize(raw))
+    for sent in _TOKENIZER.split_sentences(norm):
+        tokens.extend(_TOKENIZER.split_words(sent))
     out_tokens: list[str] = []
     for token in tokens:
         if _is_pause(token):
@@ -190,7 +190,9 @@ def cmd_ipa(
                 ipa_parts.append(part)
                 continue
             raw_ipa = (
-                _RULES.convert(part) if rules_only else (_LEXICON.get(part) or _RULES.convert(part))
+                "".join(_RULES.apply(part))
+                if rules_only
+                else (_LEXICON.get(part) or "".join(_RULES.apply(part)))
             )
             ipa = canonicalize_ipa(raw_ipa)
             if with_slashes:

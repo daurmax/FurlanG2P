@@ -23,7 +23,7 @@ def test_ipa_rules_only() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["ipa", "--rules-only", "glaç"])
     assert result.exit_code == 0
-    assert result.output.strip() == "glatʃ"
+    assert result.output.strip() == "ʎatʃ"
 
 
 def test_ipa_apostrophes() -> None:
@@ -44,7 +44,7 @@ def test_ipa_punctuation() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["ipa", "«perturbazion»,", "—", "…"])
     assert result.exit_code == 0
-    assert result.output.strip() == "perturbazion _"
+    assert result.output.strip() == "perturbadzion _"
 
 
 def test_ipa_missing_argument() -> None:
