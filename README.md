@@ -20,9 +20,11 @@ G2P conversion and batch phonemization of CSV files.
 - `src/furlan_g2p/phonology/` – canonical IPA helpers, syllabifier and stress
   assigner.
 - `examples/` – sample inputs and outputs.
-- `docs/` – supplementary documentation and bibliography.
+- `docs/` – supplementary documentation: rationale, usage, references, [architecture](docs/architecture.md), [business logic](docs/business_logic.md) and [roadmap](docs/todo.md).
 - `scripts/` – helper scripts (e.g. `generate_phonemes.py` for CSV batch runs).
 - `tests/` – minimal tests covering the implemented pieces and stubs.
+
+For a deeper overview of how components fit together and the algorithms they employ, see [docs/architecture.md](docs/architecture.md) and [docs/business_logic.md](docs/business_logic.md). Planned work is tracked in [docs/todo.md](docs/todo.md).
 
 ## Quick local run (how to launch the CLI and test phrases)
 

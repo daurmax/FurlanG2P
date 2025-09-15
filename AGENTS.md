@@ -32,6 +32,9 @@ Documentation:
   and usage examples.
 - When a change affects user-facing behaviour or packaging, update the
   appropriate README(s) to keep them in sync.
+- Documentation under `docs/` (architecture, business logic, roadmap, etc.)
+  must be reviewed and updated when code changes alter module behaviour or
+  project structure.
 
 Coding standards:
 
