@@ -24,7 +24,7 @@ G2P conversion and batch phonemization of CSV files.
 - `scripts/` – helper scripts (e.g. `generate_phonemes.py` for CSV batch runs).
 - `tests/` – minimal tests covering the implemented pieces and stubs.
 
-For a deeper overview of how components fit together and the algorithms they employ, see [docs/architecture.md](docs/architecture.md) and [docs/business_logic.md](docs/business_logic.md). Planned work is tracked in [docs/todo.md](docs/todo.md).
+For detailed documentation on component interactions and algorithmic design, consult [docs/architecture.md](docs/architecture.md) and [docs/business_logic.md](docs/business_logic.md). Ongoing and planned work is documented in [docs/todo.md](docs/todo.md).
 
 ## Quick local run (how to launch the CLI and test phrases)
 
