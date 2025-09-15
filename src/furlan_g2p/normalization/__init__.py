@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from .experimental_normalizer import ExperimentalNormalizer
 from .normalizer import Normalizer
 
-__all__ = ["Normalizer", "ExperimentalNormalizer"]
+__all__ = ["Normalizer"]

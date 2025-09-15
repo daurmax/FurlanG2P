@@ -8,7 +8,7 @@ handling, a syllabifier with basic Friulian phonotactics, a stress assigner that
 accounts for long vowels and marked accents, and an IPA canonicalizer. The
 normalizer can spell out numbers up to 999 999 999 999 and expand units,
 abbreviations and acronyms, with rules loadable from JSON or YAML files. These
-pieces back an experimental `furlang2p` CLI with subcommands for normalization,
+pieces back a `furlang2p` CLI with subcommands for normalization,
 G2P conversion and batch phonemization of CSV files.
 
 ## Project layout
