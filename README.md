@@ -197,19 +197,20 @@ Continuous integration and release workflows live under
 
 ### Releasing to PyPI
 
-New commits that land on ``main`` trigger ``release.yml`` automatically. The
-workflow bumps the patch segment by default, builds the project with Hatch,
-creates a version commit/tag and uploads the artifacts to PyPI using the
-``PYPI_API_TOKEN`` secret.
+Releases are triggered manually from the GitHub Actions tab. The workflow only
+runs for the ``main`` branch and refuses to operate against other refs. The
+``release_type`` input defaults to ``patch`` so running the workflow without
+providing a value performs a patch bump.
 
-To run the same process manually or select a different semantic version
-segment:
+To publish a release:
 
 1. Open the repository on GitHub and navigate to **Actions ▸ Release**.
-2. Click **Run workflow**, keep ``main`` selected (or choose another branch),
-   and set the ``release_type`` input to ``patch``, ``minor`` or ``major``.
-3. Confirm the run. Hatch bumps the requested segment, pushes a commit and tag
-   back to ``main``, builds wheels/sdist and publishes them to PyPI.
+2. Click **Run workflow**, ensure ``main`` is selected and optionally choose the
+   ``release_type`` input (``patch``, ``minor`` or ``major``).
+3. Confirm the run. The workflow checks out ``main``, bumps the requested
+   segment, commits the version change, creates an annotated ``vX.Y.Z`` tag on
+   ``main``, builds wheels/sdist and uploads them to PyPI via the
+   ``PYPI_API_TOKEN`` secret.
 
 ## References
 
