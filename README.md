@@ -208,7 +208,7 @@ To publish a release:
 2. Click **Run workflow**, ensure ``main`` is selected and optionally choose the
    ``release_type`` input (``patch``, ``minor`` or ``major``).
 3. Confirm the run. The workflow checks out ``main``, bumps the requested
-   segment, commits the version change, creates an annotated ``vX.Y.Z`` tag on
+   segment, commits the version change, creates an annotated ``X.Y.Z`` tag on
    ``main``, builds wheels/sdist and uploads them to PyPI via the
    ``PYPI_API_TOKEN`` secret.
 
