@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file. The project
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions
 adapted for a lightweight semantic versioning scheme.
 
-## [0.0.5] - 2025-09-24
+## [0.0.5] - 2025-09-10
 
 ### Changed
 - Replaced the MIT license with the Creative Commons Attribution-NonCommercial
@@ -18,7 +18,7 @@ adapted for a lightweight semantic versioning scheme.
 
 ### Added
 - PyPI-focused `README-pypi.md` and packaging metadata that points to it so the
-  project description on PyPI matches end-user expectations.
+  distribution long description on PyPI renders the end-user guide correctly.
 
 ### Changed
 - Rewrote the GitHub-facing `README.md` to highlight repository layout,
