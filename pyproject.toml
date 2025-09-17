@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "furlang2p"
 dynamic = ["version"]
-description = "FurlanG2P: a scalable, library-first G2P and text normalization toolkit (skeleton)."
+description = "Friulian text normalization, tokenization, G2P conversion and phonology with a CLI and pipeline service."
 readme = { file = "README-pypi.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -29,6 +29,7 @@ dev = [
   "pytest>=8.0.0",
   "pytest-cov>=4.1.0",
   "hypothesis>=6.0.0",
+  "pyyaml>=6.0",
   "mypy>=1.10.0",
   "ruff>=0.5.0",
   "black>=24.4.0",

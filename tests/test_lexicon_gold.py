@@ -44,6 +44,8 @@ GOLD = {
     "pît": "piːt",
     "mûr": "muːr",
     "côr": "kɔːr",
+    "gjat": "ɟat",
+    "zûc": "dzuːk",
 }
 
 
@@ -67,6 +69,10 @@ def test_variants_present_for_selected(lex: Lexicon) -> None:
     assert entry is not None and "seit" in entry.variants
     entry = lex.get_entry("pît")
     assert entry is not None and "peit" in entry.variants
+    entry = lex.get_entry("gjat")
+    assert entry is not None and "dʒat" in entry.variants
+    entry = lex.get_entry("zûc")
+    assert entry is not None and "tsuːk" in entry.variants
 
 
 def test_unknown_returns_none(lex: Lexicon) -> None:

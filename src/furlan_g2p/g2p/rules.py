@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import unicodedata
 from collections.abc import Iterable
 from typing import Literal
 
-from ..phonology import canonicalize_ipa
+from ..phonology import PHONEME_INVENTORY, canonicalize_ipa
 
 Dialect = Literal["central", "western_codroipo", "carnia"]
 
@@ -115,14 +116,127 @@ def orth_to_ipa_basic(word: str, dialect: Dialect = "central") -> str:
     return canonicalize_ipa(ipa)
 
 
+def _segment_ipa(ipa: str) -> list[str]:
+    """Split a canonical IPA string into phoneme symbols."""
+
+    digraphs = ["tʃ", "dʒ", "dz", "ts"]
+    segments: list[str] = []
+    i = 0
+    while i < len(ipa):
+        for d in digraphs:
+            if ipa.startswith(d, i):
+                segments.append(d)
+                i += len(d)
+                break
+        else:
+            segments.append(ipa[i])
+            i += 1
+    return segments
+
+
 class PhonemeRules:
-    """Letter-to-sound rules engine (skeleton)."""
+    """Letter-to-sound rules engine with a tiny rule set.
 
-    def __init__(self, phoneme_inventory: Iterable[str] | None = None) -> None:
-        self._inventory = set(phoneme_inventory or ())
+    The implementation is intentionally small but sufficient to cover the test
+    suite.  Rules are loosely based on the ARLeF orthography guidelines and
+    basic dialectal differences.
+    """
 
-    def apply(self, word: str) -> list[str]:  # pragma: no cover - still unimplemented
-        raise NotImplementedError("LTS rules are not implemented yet.")
+    def __init__(
+        self,
+        phoneme_inventory: Iterable[str] | None = None,
+        dialect: Dialect = "central",
+    ) -> None:
+        self._inventory = set(phoneme_inventory or PHONEME_INVENTORY)
+        self.dialect: Dialect = dialect
+
+    def apply(self, word: str) -> list[str]:
+        """Return a list of phoneme symbols for ``word``.
+
+        The method performs a deterministic orthography-to-IPA mapping and
+        segments the result into canonical phonemes.  Unknown symbols raise
+        ``ValueError`` to surface gaps in the inventory.
+        """
+
+        if not word:
+            return []
+
+        s = unicodedata.normalize("NFC", word.lower())
+        out: list[str] = []
+        i = 0
+        while i < len(s):
+            if s.startswith("ch", i):
+                out.append("k")
+                i += 2
+                continue
+            if s.startswith("gh", i):
+                out.append("g")
+                i += 2
+                continue
+            if s.startswith("cj", i):
+                out.append("c")
+                i += 2
+                continue
+            if s.startswith("gj", i):
+                out.append("ɟ")
+                i += 2
+                continue
+            if s.startswith("gn", i):
+                out.append("ɲ")
+                i += 2
+                continue
+            if s.startswith("gl", i):
+                out.append("ʎ")
+                i += 2
+                continue
+            if s.startswith("ss", i):
+                out.append("s")
+                i += 2
+                continue
+
+            ch = s[i]
+            if ch == "ç":
+                out.append("tʃ")
+            elif ch == "c":
+                nxt = s[i + 1] if i + 1 < len(s) else ""
+                out.append("tʃ" if nxt in "eêiî" else "k")
+            elif ch == "g":
+                nxt = s[i + 1] if i + 1 < len(s) else ""
+                out.append("dʒ" if nxt in "eêiî" else "g")
+            elif ch == "z":
+                out.append("ts" if self.dialect == "carnia" else "dz")
+            elif ch == "s":
+                out.append("z" if _between_vowels(s, i) and self.dialect != "carnia" else "s")
+            elif ch in _LONG_VOWELS:
+                out.append(_LONG_VOWELS[ch])
+            elif ch in "aeiouàèìòù":
+                out.append(
+                    {
+                        "e": "e",
+                        "o": "o",
+                        "à": "a",
+                        "è": "e",
+                        "ì": "i",
+                        "ò": "o",
+                        "ù": "u",
+                    }.get(ch, ch)
+                )
+            elif ch == "j":
+                out.append("j")
+            elif ch == "r":
+                out.append("r")
+            elif ch == "h":
+                pass  # standalone 'h' is silent
+            else:
+                out.append(ch)
+            i += 1
+
+        ipa = canonicalize_ipa("".join(out))
+        segments = _segment_ipa(ipa)
+        unknown = set(segments) - self._inventory
+        if unknown:
+            raise ValueError(f"Unknown phonemes: {unknown}")
+        return segments
 
 
 __all__ = ["orth_to_ipa_basic", "PhonemeRules"]

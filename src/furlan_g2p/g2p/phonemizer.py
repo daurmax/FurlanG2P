@@ -6,13 +6,13 @@ from collections.abc import Iterable
 
 from ..core.interfaces import IG2PPhonemizer
 from .lexicon import Lexicon
-from .rules import PhonemeRules, orth_to_ipa_basic
+from .rules import PhonemeRules
 
 
 def _segment_ipa(ipa: str) -> list[str]:
     """Split a canonical IPA string into phoneme symbols."""
 
-    digraphs = ["tʃ", "dʒ", "aː", "eː", "iː", "oː", "uː"]
+    digraphs = ["tʃ", "dʒ", "dz", "ts"]
     segments: list[str] = []
     i = 0
     while i < len(ipa):
@@ -43,18 +43,18 @@ class G2PPhonemizer(IG2PPhonemizer):
     def to_phonemes(self, tokens: Iterable[str]) -> list[str]:
         """Convert token strings into a flat list of phoneme symbols.
 
-        Tokens are looked up in the lexicon; if a token is absent, a minimal
-        orthography-to-IPA mapping is applied as a fallback.  Stress marks are
-        stripped before the sequence is segmented into individual phonemes.
+        Tokens are looked up in the lexicon; if a token is absent, the
+        :class:`PhonemeRules` engine maps the orthography to phonemes as a
+        fallback.  Stress marks are stripped before segmentation.
         """
 
         phonemes: list[str] = []
         for tok in tokens:
             ipa = self.lexicon.get(tok)
-            if ipa is None:
-                ipa = orth_to_ipa_basic(tok)
-            ipa = ipa.replace("ˈ", "")
-            phonemes.extend(_segment_ipa(ipa))
+            if ipa is not None:
+                phonemes.extend(_segment_ipa(ipa.replace("ˈ", "")))
+            else:
+                phonemes.extend(self.rules.apply(tok))
         return phonemes
 
 

@@ -3,14 +3,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Final
+
+_DEFAULT_UNITS: Final[dict[str, str]] = {"kg": "chilogram"}
+_DEFAULT_ABBREVIATIONS: Final[dict[str, str]] = {"sig.": "siôr"}
 
 
 @dataclass(slots=True)
 class NormalizerConfig:
     """Configuration for normalization rules."""
 
-    units_map: dict[str, str] = field(default_factory=dict)
+    units_map: dict[str, str] = field(default_factory=lambda: dict(_DEFAULT_UNITS))
     acronyms_map: dict[str, str] = field(default_factory=dict)
+    abbreviations_map: dict[str, str] = field(default_factory=lambda: dict(_DEFAULT_ABBREVIATIONS))
+    numbers_map: dict[str, str] = field(default_factory=dict)
     ordinal_map: dict[str, str] = field(default_factory=dict)
     pause_short: str = "_"
     pause_long: str = "__"
