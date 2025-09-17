@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file. The project
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions
 adapted for a lightweight semantic versioning scheme.
 
+## [0.0.5] - 2025-09-24
+
+### Changed
+- Replaced the MIT license with the Creative Commons Attribution-NonCommercial
+  4.0 International license and shipped the full text in `LICENSE`.
+- Updated packaging metadata and trove classifiers so distributions advertise
+  the new license correctly.
+- Documented the licensing change in both README variants and bumped the
+  published version to `0.0.5`.
+
 ## [0.0.4] - 2025-09-17
 
 ### Added
