@@ -4,7 +4,27 @@ All notable changes to this project are documented in this file. The project
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions
 adapted for a lightweight semantic versioning scheme.
 
-## [0.0.2] - 2025-09-17
+## [0.0.4] - 2025-09-17
+
+### Added
+- PyPI-focused `README-pypi.md` and packaging metadata that points to it so the
+  project description on PyPI matches end-user expectations.
+
+### Changed
+- Rewrote the GitHub-facing `README.md` to highlight repository layout,
+  contributor workflows and automation details for the release pipeline.
+- Updated contributor guidance in `AGENTS.md` to reflect the newly implemented
+  components and clarify documentation responsibilities.
+- Bumped the published version to `0.0.4` to match the refreshed packaging
+  assets.
+
+## [0.0.3] - 2025-09-09
+
+### Changed
+- No code or documentation changes; retagged `0.0.2` as `0.0.3` to validate the
+  automated release workflow.
+
+## [0.0.2] - 2025-09-08
 
 ### Added
 - Experimental `furlang2p ipa` CLI subcommand with options for rule-only
@@ -30,7 +50,7 @@ adapted for a lightweight semantic versioning scheme.
 - README content was expanded with quickstart instructions, CLI examples and
   contributor guidance aligned with the implemented features.
 
-## [0.0.1]
+## [0.0.1] - 2025-08-23
 
 ### Added
 - Initial public release with project scaffolding, stubbed modules, packaging
