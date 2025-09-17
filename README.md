@@ -189,10 +189,27 @@ features should extend these tests to guard against behavioural regressions.
 ## CI/CD
 
 Continuous integration and release workflows live under
-``.github/workflows/``.  ``ci.yml`` runs formatting, type checks and tests on
-every push and pull request, while ``release.yml`` bumps the package version,
-builds distributions with Hatch and publishes them to PyPI when changes land on
-``main``.
+``.github/workflows/``.
+
+- ``ci.yml`` runs formatting, type checks and tests on every push and pull request.
+- ``release.yml`` bumps the package version, builds distributions with Hatch and
+  publishes them to PyPI.
+
+### Releasing to PyPI
+
+New commits that land on ``main`` trigger ``release.yml`` automatically. The
+workflow bumps the patch segment by default, builds the project with Hatch,
+creates a version commit/tag and uploads the artifacts to PyPI using the
+``PYPI_API_TOKEN`` secret.
+
+To run the same process manually or select a different semantic version
+segment:
+
+1. Open the repository on GitHub and navigate to **Actions ▸ Release**.
+2. Click **Run workflow**, keep ``main`` selected (or choose another branch),
+   and set the ``release_type`` input to ``patch``, ``minor`` or ``major``.
+3. Confirm the run. Hatch bumps the requested segment, pushes a commit and tag
+   back to ``main``, builds wheels/sdist and publishes them to PyPI.
 
 ## References
 
