@@ -107,6 +107,7 @@ fine-grained control.
 
 - Source code and issue tracker: https://github.com/daurmax/FurlanG2P
 - Bibliography and references: https://github.com/daurmax/FurlanG2P/blob/main/docs/references.md
+- Changelog: https://github.com/daurmax/FurlanG2P/blob/main/docs/CHANGELOG.md
 
 ## License
 

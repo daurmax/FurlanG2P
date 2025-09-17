@@ -212,6 +212,11 @@ To publish a release:
    ``main``, builds wheels/sdist and uploads them to PyPI via the
    ``PYPI_API_TOKEN`` secret.
 
+## Changelog
+
+Release notes for each published version are tracked in
+[`docs/CHANGELOG.md`](docs/CHANGELOG.md).
+
 ## References
 
 FurlanG2P follows published descriptions of Friulian orthography and
