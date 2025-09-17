@@ -4,6 +4,42 @@ All notable changes to this project are documented in this file. The project
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions
 adapted for a lightweight semantic versioning scheme.
 
+## [0.1.0] - 2025-09-17
+
+### Added
+- Fully functional `normalize`, `g2p` and `phonemize-csv` CLI subcommands with
+  file input/output options, JSON/plain emission modes and clear validation
+  errors.
+- `scripts/generate_phonemes.py` helper for batch phonemisation of
+  LJSpeech-style metadata CSV files.
+- Dataclass-backed `NormalizerConfig` and `TokenizerConfig` definitions plus
+  JSON/YAML loader utilities so the normaliser and tokenizer can be tuned via
+  external configuration.
+- Cardinal number expansion up to `999 999 999 999` within the normaliser.
+- Additional architecture and usage documentation in `docs/` alongside runnable
+  examples in `examples/`, such as `pipeline_example.py`.
+- Expanded seed lexicon entries (for example `gjat`, `zûc`) sourced from the
+  cited references.
+- Focused tests for the new CLI commands, rule contexts (including dialectal
+  `z`) and normaliser behaviour, plus property-based checks that keep rule
+  outputs inside the phoneme inventory.
+
+### Changed
+- Promoted `PhonemeRules` to the default rule engine and taught the
+  `G2PPhonemizer` to fall back to it whenever the lexicon lacks a word.
+- Enhanced phoneme segmentation to recognise additional digraphs like `dz` and
+  `ts`.
+- Replaced the experimental normaliser with the full implementation that expands
+  numbers, abbreviations, acronyms and units, removing the temporary module.
+- Updated the README guides to cover the implemented subcommands,
+  configuration APIs and refreshed project layout.
+- Adjusted the release workflow to accept `workflow_dispatch` triggers with a
+  selectable release type, enforce the `main` branch, tag releases explicitly
+  and publish with the PyPI API token.
+- Refined `pyproject.toml` metadata and added optional YAML support via the
+  `pyyaml` dependency.
+- Bumped the published version to `0.1.0`.
+
 ## [0.0.5] - 2025-09-10
 
 ### Changed
