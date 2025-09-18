@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file. The project
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions
 adapted for a lightweight semantic versioning scheme.
 
+## [0.1.1] - 2025-09-18
+
+### Fixed
+- Documentation fixes and readme updates: corrected release notes and adjusted
+  README and PyPI-specific README content to keep packaging and repository
+  documentation in sync.
+
+### Changed
+- Reconciled changelog and readme links; restored a small set of release
+  history entries that were inadvertently removed.
+
 ## [0.1.0] - 2025-09-17
 
 ### Added
