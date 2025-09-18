@@ -103,6 +103,11 @@ print(Normalizer(cfg).normalize("1964 kg"))
 Lower-level components such as the lexicon and rule engine remain available for
 fine-grained control.
 
+## Changelog
+
+Release notes are published in the
+[project changelog](https://github.com/furlan-g2p/FurlanG2P/blob/main/docs/changelog.md).
+
 ## Project links
 
 - Source code and issue tracker: https://github.com/daurmax/FurlanG2P

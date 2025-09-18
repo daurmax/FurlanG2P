@@ -219,6 +219,11 @@ phonology as well as lemma-level IPA transcriptions. A curated bibliography is
 available in [docs/references.md](docs/references.md); consult it when modifying
 rules, lexicon entries or phonological behaviour.
 
+## Changelog
+
+Version history and release highlights are documented in
+[docs/changelog.md](docs/changelog.md).
+
 ## Contributing
 
 Pull requests that flesh out the skeleton or expand test coverage are welcome.
