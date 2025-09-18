@@ -50,7 +50,7 @@ adapted for a lightweight semantic versioning scheme.
 - Documented the licensing change in both README variants and bumped the
   published version to `0.0.5`.
 
-## [0.0.4] - 2025-09-17
+## [0.0.4] - 2025-09-09
 
 ### Added
 - PyPI-focused `README-pypi.md` and packaging metadata that points to it so the
