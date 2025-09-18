@@ -106,6 +106,17 @@ For detailed documentation on component interactions and algorithmic design, con
    Notes:
    - Quotes around the phrase are recommended to preserve spacing and punctuation.
 
+## Graphical interface (Tkinter)
+
+The project ships with a lightweight desktop UI that wraps the
+``PipelineService``.  Launch it via ``furlang2p ui`` (after installing the
+package) or directly with ``python -m furlan_g2p.ui.tk_ui``.  The window offers
+a multi-line input editor, displays the normalized text alongside the
+space-separated phoneme sequence, and provides a dedicated "Copy output" button
+for quickly sharing the results.  The interface is implemented with Tkinter and
+ttk widgets; any change to the pipeline's public API should be reflected in the
+controller and tests under ``src/furlan_g2p/ui/`` and ``tests/test_ui_*.py``.
+
 ### Loading normalizer configuration
 
 Normalization rules can be customised via external JSON or YAML files. A helper

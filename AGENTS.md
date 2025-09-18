@@ -42,3 +42,11 @@ Coding standards:
 - Docstrings with argument/return types and examples.
 - Keep runtime deps minimal; add extras behind optional groups if needed.
 - Follow ruff/black/mypy configs defined in pyproject.toml.
+
+UI maintenance:
+
+- The Tkinter UI under `src/furlan_g2p/ui/` mirrors the public contract of
+  `PipelineService`. When that contract changes (new outputs, altered
+  signatures, updated formatting), update the controller, widgets and
+  accompanying tests in `tests/test_ui_controller.py` and
+  `tests/test_ui_tk.py` to keep the graphical client in sync.
