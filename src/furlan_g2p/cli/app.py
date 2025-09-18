@@ -127,6 +127,15 @@ def cmd_g2p(inp: str | None, out: str | None, fmt: str, sep: str, text: tuple[st
         click.echo(out_data)
 
 
+@cli.command("ui", help="Launch the Tkinter graphical interface.")
+def cmd_ui() -> None:
+    """Start the desktop UI."""
+
+    from ..ui import run as run_ui
+
+    run_ui([])
+
+
 @cli.command("phonemize-csv")
 @click.option("--in", "inp", required=True, help="Input metadata CSV (LJSpeech-like).")
 @click.option("--out", "out", required=True, help="Output CSV with phonemes added.")
