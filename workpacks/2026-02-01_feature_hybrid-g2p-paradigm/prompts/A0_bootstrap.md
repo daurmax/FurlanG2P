@@ -66,20 +66,11 @@ Create the feature branch `feature/hybrid-g2p-paradigm` from `main` to serve as 
 
 ## Verification
 
-### Commands
-
 ```bash
-# Ensure on main and up to date
 git checkout main
 git pull origin main
-
-# Create feature branch
 git checkout -b feature/hybrid-g2p-paradigm
-
-# Push to origin
 git push -u origin feature/hybrid-g2p-paradigm
-
-# Verify branch exists
 git branch -a | grep hybrid-g2p-paradigm
 ```
 
@@ -87,41 +78,7 @@ git branch -a | grep hybrid-g2p-paradigm
 
 ## Handoff Output (JSON) — REQUIRED
 
-After completing the work, create/update:
-
 **Path**: `./workpacks/2026-02-01_feature_hybrid-g2p-paradigm/outputs/A0_bootstrap.json`
-
-```json
-{
-  "schema_version": "1.0",
-  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
-  "prompt": "A0_bootstrap",
-  "component": "bootstrap",
-  "delivery_mode": "direct_push",
-  "branch": {
-    "base": "main",
-    "work": "feature/hybrid-g2p-paradigm",
-    "merge_target": "main"
-  },
-  "summary": "Created feature branch for hybrid G2P paradigm workpack",
-  "handoff": {
-    "files_modified": [],
-    "files_created": [],
-    "verification": {
-      "commands_run": ["git branch -a"],
-      "all_passed": true
-    },
-    "next_steps": [
-      "A1_library can begin implementation",
-      "A4_docs can begin architecture documentation"
-    ],
-    "known_issues": []
-  },
-  "artifacts": {
-    "commits": ["<commit-sha>"]
-  }
-}
-```
 
 ---
 
@@ -129,7 +86,6 @@ After completing the work, create/update:
 
 - **STOP** if `main` branch has uncommitted changes
 - **STOP** if branch already exists (check with team first)
-- **CONTINUE** otherwise
 
 ---
 

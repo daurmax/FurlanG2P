@@ -15,18 +15,23 @@
 ### Workpack Artifacts
 - [x] `00_request.md` complete
 - [x] `01_plan.md` complete
-- [x] Agent prompts A-series complete
+- [x] Agent prompts A-series complete (A0-A10)
 - [x] `outputs/` folder present (Protocol v3)
 - [ ] Handoff outputs JSON updated for completed prompts
 - [x] No placeholders remain
 
 ### Implementation Progress (A-series)
 - [ ] A0: Create feature branch
-- [ ] A1: Evaluation module, lexicon schema, builder, ML interface
-- [ ] A2: CLI commands for lexicon/evaluation/coverage
-- [ ] A3: Comprehensive test suite
-- [ ] A4: Documentation updates
-- [ ] A5: Integration and merge
+- [ ] A1: Evaluation module (WER, PER, stress accuracy)
+- [ ] A2: Lexicon schema (LexiconEntry, LexiconConfig, storage)
+- [ ] A3: LexiconBuilder (WikiPron, canonicalizer)
+- [ ] A4: Dialect-aware pipeline
+- [ ] A5: ML interface (IExceptionModel, [ml] extra)
+- [ ] A6: CLI lexicon commands (build, info, export, validate)
+- [ ] A7: CLI evaluate commands (evaluate, coverage)
+- [ ] A8: Comprehensive test suite
+- [ ] A9: Documentation updates
+- [ ] A10: Integration and merge
 - [ ] All tests passing
 - [ ] Documentation updated
 - [ ] Integration complete
@@ -36,11 +41,16 @@
 | Prompt | Output JSON Path | Status |
 |--------|------------------|--------|
 | A0_bootstrap | `outputs/A0_bootstrap.json` | ⚪ Not Created |
-| A1_library | `outputs/A1_library.json` | ⚪ Not Created |
-| A2_cli | `outputs/A2_cli.json` | ⚪ Not Created |
-| A3_tests | `outputs/A3_tests.json` | ⚪ Not Created |
-| A4_docs | `outputs/A4_docs.json` | ⚪ Not Created |
-| A5_integration | `outputs/A5_integration.json` | ⚪ Not Created |
+| A1_evaluation | `outputs/A1_evaluation.json` | ⚪ Not Created |
+| A2_lexicon_schema | `outputs/A2_lexicon_schema.json` | ⚪ Not Created |
+| A3_lexicon_builder | `outputs/A3_lexicon_builder.json` | ⚪ Not Created |
+| A4_dialect_pipeline | `outputs/A4_dialect_pipeline.json` | ⚪ Not Created |
+| A5_ml_interface | `outputs/A5_ml_interface.json` | ⚪ Not Created |
+| A6_cli_lexicon | `outputs/A6_cli_lexicon.json` | ⚪ Not Created |
+| A7_cli_evaluate | `outputs/A7_cli_evaluate.json` | ⚪ Not Created |
+| A8_tests | `outputs/A8_tests.json` | ⚪ Not Created |
+| A9_docs | `outputs/A9_docs.json` | ⚪ Not Created |
+| A10_integration | `outputs/A10_integration.json` | ⚪ Not Created |
 
 ### Output Status Legend
 
@@ -55,11 +65,16 @@
 | Agent | Status | PR Link | Notes |
 |-------|--------|---------|-------|
 | A0_bootstrap | 🔴 Not Started | - | Create feature branch |
-| A1_library | 🔴 Not Started | - | Core library implementation |
-| A2_cli | 🔴 Not Started | - | CLI commands |
-| A3_tests | 🔴 Not Started | - | Test suite |
-| A4_docs | 🔴 Not Started | - | Documentation |
-| A5_integration | 🔴 Not Started | - | Merge reviewer |
+| A1_evaluation | 🔴 Not Started | - | WER, PER, stress accuracy |
+| A2_lexicon_schema | 🔴 Not Started | - | LexiconEntry, storage I/O |
+| A3_lexicon_builder | 🔴 Not Started | - | WikiPron, canonicalizer |
+| A4_dialect_pipeline | 🔴 Not Started | - | Dialect-aware lookup |
+| A5_ml_interface | 🔴 Not Started | - | IExceptionModel, [ml] extra |
+| A6_cli_lexicon | 🔴 Not Started | - | Lexicon CLI commands |
+| A7_cli_evaluate | 🔴 Not Started | - | Evaluate CLI commands |
+| A8_tests | 🔴 Not Started | - | Test suite |
+| A9_docs | 🔴 Not Started | - | Documentation |
+| A10_integration | 🔴 Not Started | - | Merge reviewer |
 
 ### Status Legend
 
@@ -77,11 +92,13 @@
 ## Merge Order
 
 1. A0_bootstrap (branch creation)
-2. A1_library → feature branch
-3. A2_cli → feature branch (after A1)
-4. A3_tests → feature branch (after A1, A2)
-5. A4_docs → feature branch (can parallel with A2, A3)
-6. A5_integration → merge feature to main
+2. A1_evaluation, A2_lexicon_schema, A5_ml_interface → feature branch (parallel)
+3. A3_lexicon_builder → feature branch (after A2)
+4. A4_dialect_pipeline → feature branch (after A2, A3)
+5. A6_cli_lexicon, A7_cli_evaluate → feature branch (parallel, after A3, A4, A1)
+6. A8_tests → feature branch (after A1-A7)
+7. A9_docs → feature branch (after A1-A8)
+8. A10_integration → merge feature to main
 
 ## Acceptance Criteria Status
 
