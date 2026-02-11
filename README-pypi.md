@@ -1,139 +1,62 @@
 # FurlanG2P
 
-Utilities for converting Friulian (Furlan) text to phonemes. The package
-includes a tiny gold lexicon with variant transcriptions, a dialect-aware
-letter‑to‑sound rule engine, a configurable normalization routine, a
-sentence/word tokenizer, a syllabifier with basic phonotactics, a stress
-assigner aware of long vowels and accent marks, and an IPA canonicalizer that
-together provide a `furlang2p` command-line tool. The normalizer
-spells out numbers up to 999 999 999 999 and can expand units, abbreviations and
-acronyms, with rules loaded from JSON or YAML files, while the tokenizer can
-skip sentence splits after configurable abbreviations.  The CLI also offers
-subcommands to normalize text, output phoneme sequences, run quality/coverage
-analysis and batch phonemize metadata CSV files.
+FurlanG2P converts Friulian (Furlan) text to phonemes using a hybrid approach:
+- lexicon lookup first,
+- deterministic rules fallback,
+- optional ML exception interface (`[ml]` extra).
+
+It provides the `furlang2p` CLI and reusable Python APIs.
 
 ## Installation
+
+Base package:
 
 ```bash
 pip install furlang2p
 ```
 
-## CLI usage
+With optional ML dependencies:
 
-Phonemise short phrases using the `ipa` subcommand:
+```bash
+pip install "furlang2p[ml]"
+```
+
+## Quick CLI examples
 
 ```bash
 furlang2p ipa "ìsule glace"
-# -> ˈizule ˈglatʃe
+furlang2p normalize "CJASE 1964 kg"
+furlang2p g2p "Cjase"
+furlang2p phonemize-csv --in metadata.csv --out out.csv
 ```
 
-Wrap tokens in slashes or force rule-only conversion:
+Lexicon, evaluation, and coverage workflows:
 
 ```bash
-furlang2p ipa --with-slashes "glaç"
-# -> /ˈglatʃ/
-
-furlang2p ipa --rules-only "glaç"
-# -> glatʃ
+furlang2p lexicon build source.tsv --output lexicon.jsonl --source-type tsv
+furlang2p lexicon info lexicon.jsonl
+furlang2p evaluate gold.tsv --verbose
+furlang2p coverage words.txt --show-oov
 ```
 
-Use underscores as pause markers and customise the token separator:
-
-```bash
-furlang2p ipa --sep '|' _ "ìsule" __
-# -> _|ˈizule|__
-```
-
-Other available subcommands:
-
-- Normalize and expand numbers/abbreviations:
-
-  ```bash
-  furlang2p normalize "CJASE 1964 kg"
-  # -> cjase mil nûfcent e sessantecuatri chilogram
-  ```
-
-- Convert a phrase to phonemes:
-
-  ```bash
-  furlang2p g2p "Cjase"
-  # -> ˈc a z e
-  ```
-
-- Phonemize a metadata CSV:
-
-  ```bash
-  furlang2p phonemize-csv --in metadata.csv --out out.csv
-  ```
-
-- Evaluate predictions against a gold TSV:
-
-  ```bash
-  furlang2p evaluate gold.tsv --format text
-  ```
-
-- Analyze lexicon/rule coverage over a wordlist:
-
-  ```bash
-  furlang2p coverage words.txt --show-oov --format json
-  ```
-
-- Lexicon workflow (build/info/export/validate):
-
-  ```bash
-  furlang2p lexicon build source.tsv -o lexicon.jsonl --source-type tsv
-  furlang2p lexicon info lexicon.jsonl
-  furlang2p lexicon export lexicon.jsonl lexicon.tsv -f tsv
-  furlang2p lexicon validate lexicon.jsonl --strict
-  ```
-
-The repository also ships a convenience script providing the same batch
-conversion:
-
-```bash
-python scripts/generate_phonemes.py --in metadata.csv --out out.csv
-```
-
-All subcommands validate inputs and emit clear error messages for missing
-files or conflicting arguments.
-
-## Python usage
-
-Invoke the full pipeline programmatically:
+## Python API
 
 ```python
 from furlan_g2p.services import PipelineService
 
-pipe = PipelineService()
+pipe = PipelineService(default_dialect="central")
 norm, phonemes = pipe.process_text("Cjase")
-print(norm)                   # cjase
-print(" ".join(phonemes))     # ˈc a z e
+print(norm)
+print(" ".join(phonemes))
 ```
 
-Normalisation rules can be customised via external JSON or YAML files:
+## Links
 
-```python
-from furlan_g2p.config import load_normalizer_config
-from furlan_g2p.normalization import Normalizer
-
-cfg = load_normalizer_config("norm_rules.yml")
-print(Normalizer(cfg).normalize("1964 kg"))
-# -> mil nûfcent e sessantecuatri chilogram
-```
-
-Lower-level components such as the lexicon and rule engine remain available for
-fine-grained control.
-
-## Changelog
-
-Release notes are published in the
-[project changelog](https://github.com/furlan-g2p/FurlanG2P/blob/main/docs/changelog.md).
-
-## Project links
-
-- Source code and issue tracker: https://github.com/daurmax/FurlanG2P
-- Bibliography and references: https://github.com/daurmax/FurlanG2P/blob/main/docs/references.md
+- Source code and issues: https://github.com/daurmax/FurlanG2P
+- Changelog: https://github.com/daurmax/FurlanG2P/blob/main/docs/changelog.md
+- References: https://github.com/daurmax/FurlanG2P/blob/main/docs/references.md
 
 ## License
 
-This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](https://github.com/daurmax/FurlanG2P/blob/main/LICENSE).
+Creative Commons Attribution-NonCommercial 4.0 International:
+https://github.com/daurmax/FurlanG2P/blob/main/LICENSE

@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A9_docs",
+  "component": "docs",
+  "delivery_mode": "pr",
+  "branch": {
+    "base": "feature/hybrid-g2p-paradigm",
+    "work": "agent/a9-docs",
+    "merge_target": "feature/hybrid-g2p-paradigm"
+  },
+  "changes": {
+    "files_modified": [
+      "README.md",
+      "README-pypi.md",
+      "docs/architecture.md",
+      "docs/business_logic.md",
+      "docs/usage.md",
+      "docs/changelog.md",
+      "docs/references.md"
+    ],
+    "files_created": [
+      "workpacks/2026-02-01_feature_hybrid-g2p-paradigm/outputs/A9_docs.json"
+    ],
+    "contracts_changed": [],
+    "breaking_change": false
+  },
+  "verification": {
+    "commands": [
+      {
+        "cmd": "rg -n \"lexicon build|evaluate|coverage\" docs/usage.md",
+        "result": "pass"
+      },
+      {
+        "cmd": "rg -n \"TODO|FIXME|XXX\" docs/",
+        "result": "pass",
+        "notes": "No placeholders found."
+      },
+      {
+        "cmd": "Relative markdown-link sanity script over README/docs",
+        "result": "pass",
+        "notes": "No broken relative links detected in edited files."
+      },
+      {
+        "cmd": "py -3 -m furlan_g2p.main --help",
+        "result": "pass"
+      }
+    ],
+    "regression_added": false
+  },
+  "handoff": {
+    "summary": "Updated all requested documentation for the hybrid G2P paradigm: architecture, business logic, usage workflows, contributor README, PyPI README, changelog release entry, and references (WikiPron, SIGMORPHON, ByT5, COF).",
+    "known_issues": [
+      "A8_tests handoff JSON was not present in outputs/ at documentation time; docs were aligned to implemented code and available A1-A7 handoffs.",
+      "ML exception-model path is documented as optional/extension architecture; runtime default remains lexicon + rules due NullExceptionModel."
+    ],
+    "next_steps": [
+      "Review and merge PR into feature/hybrid-g2p-paradigm.",
+      "After A10 integration, sync workpack status file and release notes if branch policy requires it.",
+      "When a concrete ML model is integrated, update usage/business-logic docs to describe runtime ML decision thresholds."
+    ],
+    "notes_for_integration": "Documentation updates are intentionally behavior-accurate to current implementation while preserving the target hybrid architecture narrative for upcoming ML integration."
+  }
+}

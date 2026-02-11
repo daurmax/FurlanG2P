@@ -1,57 +1,140 @@
 # Business Logic
 
-This document details the algorithms and linguistic rules implemented in FurlanG2P. A bibliography for the sources cited here is maintained in [references.md](references.md).
+This document describes the current algorithmic behavior of FurlanG2P. Source
+references are listed in [references.md](references.md).
 
-## Normalisation
+## Hybrid lookup strategy
 
-The normalisation step enforces a canonical textual form that mirrors the spelling rules in the official Friulian orthography [ARLeF 2017](references.md). Key operations include:
+FurlanG2P follows a hybrid priority model for pronunciation generation:
 
-- Unicode NFC normalisation and lower‑casing.
-- Replacing curly apostrophes with straight ones so contractions match lexicon entries.
-- Mapping `, ; :` to the short pause marker `_` and `. ? !` to the long pause marker `__` for downstream prosody hints.
-- Expanding measurement units, abbreviations, acronyms and ordinals according to a `NormalizerConfig` that can be loaded from JSON or YAML.
-- Rendering numbers up to 999 999 999 999 as Friulian words using the built‑in `number_to_words_fr` utility, whose forms are based on Wiktionary’s cardinal list [Wiktionary](references.md#numbers-and-abbreviations).
+1. Lexicon lookup.
+2. Optional ML exception prediction.
+3. Deterministic rules.
 
-## Tokenisation
+Runtime details:
+- The public architecture includes an ML interface (`IExceptionModel`) for
+  exception handling.
+- Base installs use `NullExceptionModel`, which always returns `None`.
+- Current effective runtime path is therefore `lexicon -> rules`, while the
+  `lexicon -> ML -> rules` chain is the supported extension point.
 
-Tokenisation occurs in two passes. `split_sentences` shields non‑terminal abbreviations with a sentinel character before splitting on sentence‑final punctuation, ensuring that strings such as `dr.` are not treated as sentence boundaries. `split_words` then normalises apostrophes and extracts tokens with a regular expression that preserves underscore pause markers so subsequent modules can retain pause information.
+Lexicon-first behavior:
+- Lexicon entries are high-precision and include metadata (`source`,
+  `confidence`, `dialect`).
+- If a lexicon hit exists, its IPA wins over rule output.
 
-## Grapheme‑to‑Phoneme
+Rules fallback:
+- If lookup fails, `PhonemeRules` generates IPA via deterministic orthography
+  mappings.
+- Unknown generated phonemes trigger validation errors (`ValueError`), which
+  allows coverage analysis to classify true OOV items.
 
-The G2P component combines lexicon lookups with rule‑based conversion:
+## Dialect handling
 
-- `Lexicon` supplies IPA transcriptions from `seed_lexicon.tsv`; lookups are NFC‑normalised, lower‑cased and cached with an LRU strategy.
-- `PhonemeRules` implements deterministic orthography→IPA mapping derived from the ARLeF guide to Friulian spelling [ARLeF 2017](references.md):
-  - digraph handling for sequences such as `ch`, `gh`, `cj`, `gj`, `gn`, `gl` and `ss`.
-  - conversion of circumflex vowels to long monophthongs (`â`→`aː`, `î`→`iː`, etc.).
-  - contextual voicing of `s` between vowels and dialect‑aware treatment of `z`, following observations by Baroni & Vanelli (2000) [Baroni & Vanelli 2000](references.md).
-  - segmentation of the resulting IPA string and validation of each symbol against `PHONEME_INVENTORY` compiled from ARLeF and Miotti (2002) [Miotti 2002](references.md).
-- `G2PPhonemizer` queries the lexicon first and falls back to the rule engine; any stress marks present in the input are removed before segmentation so that stress assignment can be applied uniformly later.
+Dialect conditioning is carried through lookup, rule generation, and pipeline
+service orchestration.
 
-## Phonology
+Lookup behavior:
+- Dialect-aware keys are `(lemma, dialect)` plus optional universal entries
+  `(lemma, None)`.
+- Dialect aliases are normalized (`west -> western`, `carn -> carnic`, etc.).
+- `LexiconConfig.fallback_to_universal=True` allows fallback to universal
+  entries when no dialect-specific entry is found.
 
-Phonological post‑processing standardises and analyses the IPA output:
+Pipeline behavior:
+- Default dialect can be configured at service construction
+  (`PipelineService(default_dialect=...)`).
+- Per-request dialect overrides default at `process_text(..., dialect=...)`.
+- CSV processing can consume row-specific dialects via `dialect_column`.
 
-- `canonicalize_ipa` removes tie bars and normalises variant symbols (`t͡ʃ`→`tʃ`, `ɹ`→`r`, etc.) to ease downstream processing.
-- `Syllabifier` merges standalone length marks with the preceding vowel and applies onset maximisation using a whitelist of allowable clusters described by Miotti (2002) [Miotti 2002](references.md) and Roseano & Finco (2021) [Roseano & Finco 2021](references.md).
-- `StressAssigner` honours pre‑marked stress; otherwise it stresses the last long vowel or, if none, the penultimate syllable, reflecting the generalisations noted by Baroni & Vanelli (2000) [Baroni & Vanelli 2000](references.md).
+Rules behavior:
+- Rule engine accepts a per-call dialect override.
+- Dialect affects ambiguous mappings such as `z` and intervocalic `s`.
 
-## Pipeline
+## Normalization and tokenization
 
-`PipelineService` orchestrates the modules in the sequence normalisation → sentence split → word split → G2P → syllabification → stress assignment and returns the normalised text together with the final phoneme sequence, enabling batch or interactive processing through the CLI.
+Normalization enforces a stable orthographic surface before G2P:
+- Unicode NFC normalization and lowercasing.
+- Apostrophe normalization.
+- Pause-marker normalization (`_`, `__`) from punctuation.
+- Expansion of units, abbreviations, acronyms, ordinals, and numbers up to
+  `999 999 999 999`.
 
-## Evaluation and Coverage
+Tokenization is two-stage:
+- Sentence split with abbreviation shielding.
+- Word split with regex token extraction while preserving pause markers.
 
-The `evaluation` module exposes `Evaluator`, which computes:
+## Lexicon schema fields
 
-- **WER**: proportion of words where normalized predicted IPA differs from gold IPA.
-- **PER**: phoneme-level Levenshtein distance divided by total gold phoneme count.
-- **Stress accuracy**: agreement of primary stress marker position (`ˈ`) over items where gold stress is marked.
+`lexicon.schema.LexiconEntry` fields and their purpose:
 
-The CLI `evaluate` command uses `PipelineService` to generate predictions and delegates all metric calculations to `Evaluator`.
+| Field | Type | Purpose |
+| --- | --- | --- |
+| `lemma` | `str` | Orthographic key used for lookup and merging. |
+| `ipa` | `str` | Primary canonical pronunciation used as default output. |
+| `dialect` | `str \| None` | Dialect conditioning (`central`, `western`, `carnic`) or universal (`None`). |
+| `source` | `str` | Provenance (`seed`, `wikipron`, `manual`, etc.) for trust/audit. |
+| `confidence` | `float` | Confidence score (`0.0..1.0`) used during merge tie-breaking. |
+| `frequency` | `int \| None` | Optional corpus frequency/rank hint for downstream prioritization. |
+| `alternatives` | `list[str]` | Secondary pronunciations retained for export/analysis. |
 
-The CLI `coverage` command classifies each input word as:
+Derived behavior:
+- `stress_marked` is true when IPA contains `ˈ` or `ˌ`.
 
-- **Lexicon hit** when `Lexicon` finds an entry (dialect-aware lookup with universal fallback).
-- **Rule-only** when no lexicon entry exists but `PhonemeRules` can generate a valid phoneme sequence.
-- **OOV** when neither lexicon nor rules yield a pronunciation.
+## IPA canonicalization
+
+Canonicalization is applied during ingestion, lookup normalization, and
+evaluation comparison to prevent false mismatches.
+
+What canonicalization does:
+- Unicode NFC normalization.
+- Bracket/slash stripping when present.
+- Tie-bar removal (for affricate representation normalization).
+- Symbol mapping via `data/ipa_mapping.tsv`.
+- Multi-space collapse and trimmed output.
+
+Why it matters:
+- Prevents representational duplicates from being treated as separate variants.
+- Makes validation against project phoneme inventory deterministic.
+- Stabilizes evaluation metrics by comparing equivalent IPA forms.
+
+## Evaluation metrics
+
+`evaluation.Evaluator` computes three primary metrics:
+
+- `WER` (word error rate): fraction of words where normalized predicted IPA does
+  not exactly match normalized gold IPA.
+- `PER` (phoneme error rate): total phoneme-level Levenshtein distance divided
+  by total gold phoneme count.
+- `Stress accuracy`: proportion of rows with matching primary stress marker
+  position (`ˈ`) among rows where gold stress is present.
+
+Supporting rules:
+- IPA is normalized before comparison.
+- Empty evaluation sets return zero-valued metrics.
+- Length mismatch between prediction and gold lists raises `ValueError`.
+
+## Coverage classification
+
+The CLI `coverage` command classifies each word into exactly one class:
+
+- `lexicon`: lexicon lookup hit.
+- `rule_only`: no lexicon hit, but rules successfully generate a valid output.
+- `oov`: neither lexicon nor rules produce a valid pronunciation.
+
+Coverage ratio is computed as:
+- `(lexicon_hits + rule_only_hits) / total_words`.
+
+## End-to-end pipeline
+
+`PipelineService` orchestrates:
+
+1. Normalization.
+2. Sentence splitting.
+3. Word tokenization.
+4. G2P lookup/generation.
+5. Syllabification.
+6. Stress assignment.
+
+It returns `(normalized_text, phoneme_sequence)` for single-text use and offers
+`process_csv` for batch metadata processing.

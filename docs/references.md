@@ -11,6 +11,13 @@
 - Iosad, P. (2012). Final devoicing and vowel lengthening in the north of Italy: A representational approach. *Lingua, 122*(8), 841–864. [DOI](https://doi.org/10.1016/j.lingua.2012.02.005) ([archive](https://web.archive.org/web/*/https://doi.org/10.1016/j.lingua.2012.02.005)).
 - Baroni, M., & Vanelli, L. (2000). The relationship between vowel length and consonantal voicing in Friulian. In N. Burton-Roberts, P. Carr, & G. Docherty (Eds.), *Phonological Knowledge* (pp. 29–49). Benjamins. [DOI](https://doi.org/10.1075/cilt.212.04bar) ([archive](https://web.archive.org/web/*/https://doi.org/10.1075/cilt.212.04bar)).
 
+## Hybrid G2P and low-resource systems
+
+- Lee, J. L., Ashby, L. F. E., Garza, M. E., Lee-Sikka, Y., Miller, S., Wong, A., McCarthy, A. D., & Gorman, K. (2020). *Massively Multilingual Pronunciation Modeling with WikiPron*. In Proceedings of the Twelfth Language Resources and Evaluation Conference (pp. 4223–4228). [ACL Anthology](https://aclanthology.org/2020.lrec-1.521/) ([PDF](https://aclanthology.org/2020.lrec-1.521.pdf), [archive](https://web.archive.org/web/*/https://aclanthology.org/2020.lrec-1.521/)).
+- Gorman, K., Ashby, L. F. E., Goyzueta, A., McCarthy, A., Wu, S., & You, D. (2020). *The SIGMORPHON 2020 Shared Task on Multilingual Grapheme-to-Phoneme Conversion*. In Proceedings of the 17th SIGMORPHON Workshop on Computational Research in Phonetics, Phonology, and Morphology (pp. 40–50). [ACL Anthology](https://aclanthology.org/2020.sigmorphon-1.2/) ([DOI](https://doi.org/10.18653/v1/2020.sigmorphon-1.2), [archive](https://web.archive.org/web/*/https://aclanthology.org/2020.sigmorphon-1.2/)).
+- Zhu, J., Zhang, C., & Jurgens, D. (2022). *ByT5 model for massively multilingual grapheme-to-phoneme conversion*. In INTERSPEECH 2022. [ISCA Archive](https://www.isca-archive.org/interspeech_2022/zhu22_interspeech.html) ([arXiv](https://arxiv.org/abs/2204.03067), [archive](https://web.archive.org/web/*/https://www.isca-archive.org/interspeech_2022/zhu22_interspeech.html)).
+- ARLeF. (n.d.). *Correttore Ortografico Friulano (COF)*. [Tool page](https://arlef.it/it/strumenti/correttore-ortografico-friulano/) ([online guide](https://arlef.it/struments/coretor-ortografic-furlan/vuide-in-linie/), [archive](https://web.archive.org/web/*/https://arlef.it/it/strumenti/correttore-ortografico-friulano/)).
+
 ## Gold lemma → IPA (Wiktionary)
 
 - cûr — [Wiktionary](https://en.wiktionary.org/wiki/c%C3%BBr) ([archive](https://web.archive.org/web/*/https://en.wiktionary.org/wiki/c%C3%BBr)).
