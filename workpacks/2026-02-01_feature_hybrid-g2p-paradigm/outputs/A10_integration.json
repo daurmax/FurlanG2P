@@ -1,0 +1,166 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A10_integration",
+  "component": "integration",
+  "delivery_mode": "pr",
+  "timestamp_utc": "2026-02-11T13:58:00Z",
+  "branch": {
+    "base": "feature/hybrid-g2p-paradigm",
+    "merge_target": "main"
+  },
+  "artifacts": {
+    "feature_pr_url": "https://github.com/daurmax/FurlanG2P/pull/28",
+    "merge_commit_sha": "8e8bd31b7432ee92f1f34bfd15df6adcb249b8a0",
+    "merged_agent_prs": [
+      "https://github.com/daurmax/FurlanG2P/pull/25",
+      "https://github.com/daurmax/FurlanG2P/pull/26",
+      "https://github.com/daurmax/FurlanG2P/pull/27"
+    ]
+  },
+  "handoff_output_validation": {
+    "all_present": true,
+    "all_valid_json": true,
+    "required_fields_present": true,
+    "results": {
+      "A0_bootstrap": "pass",
+      "A1_evaluation": "pass",
+      "A2_lexicon_schema": "pass",
+      "A3_lexicon_builder": "pass",
+      "A4_dialect_pipeline": "pass",
+      "A5_ml_interface": "pass",
+      "A6_cli_lexicon": "pass",
+      "A7_cli_evaluate": "pass",
+      "A8_tests": "pass",
+      "A9_docs": "pass"
+    },
+    "notes": [
+      "A1_evaluation handoff was normalized to include files_created and verification.all_passed required by integration checklist."
+    ]
+  },
+  "verification_suite": {
+    "all_passed": true,
+    "commands": [
+      {
+        "cmd": "py -3 -m pip install -e \".[dev,ml]\"",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m pytest tests/ -v",
+        "result": "pass",
+        "details": "176 passed"
+      },
+      {
+        "cmd": "py -3 -m pytest tests/ --cov=src/furlan_g2p --cov-report=term-missing",
+        "result": "pass",
+        "details": "TOTAL 87% coverage"
+      },
+      {
+        "cmd": "py -3 -m pytest tests/ --cov=src/furlan_g2p/evaluation --cov=src/furlan_g2p/lexicon --cov=src/furlan_g2p/ml --cov-fail-under=80",
+        "result": "pass",
+        "details": "TOTAL 87.84% (threshold 80%)"
+      },
+      {
+        "cmd": "py -3 -m mypy src/",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m ruff check src/ tests/",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m ruff format --check src/ tests/",
+        "result": "pass"
+      }
+    ]
+  },
+  "coverage_report": {
+    "full_package_total_percent": 87.0,
+    "new_modules_total_percent": 87.84,
+    "new_modules": {
+      "evaluation_percent": 99.0,
+      "lexicon_percent": 87.0,
+      "ml_percent": 88.0
+    },
+    "threshold_percent": 80.0
+  },
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "criterion": "LexiconBuilder ingests WikiPron",
+      "verification": "py -3 -m pytest tests/test_lexicon_builder.py -v",
+      "status": "pass"
+    },
+    {
+      "id": "AC2",
+      "criterion": "Lexicon schema with dialect/confidence",
+      "verification": "py -3 -m pytest tests/test_lexicon_schema.py -v",
+      "status": "pass"
+    },
+    {
+      "id": "AC3",
+      "criterion": "Evaluation metrics (WER, PER, stress)",
+      "verification": "py -3 -m pytest tests/test_evaluation.py -v",
+      "status": "pass"
+    },
+    {
+      "id": "AC4",
+      "criterion": "Dialect-aware lexicon lookup",
+      "verification": "py -3 -m pytest tests/test_lexicon_lookup.py -v",
+      "status": "pass"
+    },
+    {
+      "id": "AC5",
+      "criterion": "IExceptionModel interface",
+      "verification": "py -3 -c \"from furlan_g2p.ml import IExceptionModel\"",
+      "status": "pass"
+    },
+    {
+      "id": "AC6",
+      "criterion": "CLI commands",
+      "verification": "py -3 -m furlan_g2p.main lexicon --help && py -3 -m furlan_g2p.main evaluate --help",
+      "status": "pass"
+    },
+    {
+      "id": "AC7",
+      "criterion": "Documentation updated",
+      "verification": "Manual review of docs/ + README files",
+      "status": "pass"
+    },
+    {
+      "id": "AC8",
+      "criterion": "Type hints and mypy pass",
+      "verification": "py -3 -m mypy src/",
+      "status": "pass"
+    },
+    {
+      "id": "AC9",
+      "criterion": "Test coverage >=80%",
+      "verification": "py -3 -m pytest tests/ --cov=src/furlan_g2p/evaluation --cov=src/furlan_g2p/lexicon --cov=src/furlan_g2p/ml --cov-fail-under=80",
+      "status": "pass"
+    },
+    {
+      "id": "AC10",
+      "criterion": "ML optional extra",
+      "verification": "py -3 -m pip install -e \".[ml]\"",
+      "status": "pass"
+    }
+  ],
+  "smoke_tests": {
+    "imports": "pass",
+    "cli_help": "pass",
+    "lexicon_build_info": "pass",
+    "notes": [
+      "In this environment, Windows policy blocked direct execution of furlang2p.exe; equivalent module entrypoint py -3 -m furlan_g2p.main was used."
+    ]
+  },
+  "merge_decision": {
+    "blocked": false,
+    "authorized": true,
+    "reason": "All acceptance criteria and verification gates passed; feature branch merged to main."
+  },
+  "known_issues": [
+    "Ruff emits a configuration deprecation warning for top-level select/ignore keys in pyproject.toml.",
+    "Prompt smoke command uses furlan-g2p, while project script name is furlang2p."
+  ]
+}
