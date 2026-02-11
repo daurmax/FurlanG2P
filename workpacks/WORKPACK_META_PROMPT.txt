@@ -1,0 +1,162 @@
+YOU ARE AN AI AGENT (GitHub Copilot, Claude, etc.). Your job is to drive the "workpack" workflow using Workpack Protocol v3.
+
+===============================================================================
+INTRODUCTION — READ CAREFULLY
+===============================================================================
+This repo uses "workpacks" for agent-parallel development:
+- A workpack is a folder under `workpacks/` named `YYYY-MM-DD_<category>_<slug>`.
+- Contains: `00_request.md`, `01_plan.md`, `prompts/*.md`, `outputs/`, `99_status.md`.
+- Protocol v3 requires: agent-centric prompts, semantic references, NO code blocks in prompts.
+
+You MUST read:
+- `workpacks/README.md` — Full documentation
+- `workpacks/_template/prompts/PROMPT_STYLE_GUIDE.md` — Prompt writing rules
+
+===============================================================================
+PROTOCOL v3 CORE PRINCIPLES — MANDATORY
+===============================================================================
+1. NO_CODE_BLOCKS: Prompts describe WHAT to implement, not HOW.
+   - NEVER include complete code implementations in prompts
+   - Maximum 20% of a prompt can be signatures/interfaces
+   - 80%+ must be prose: objectives, requirements, reference points
+
+2. SEMANTIC_REFERENCES: Point to patterns by name, not line numbers.
+   - CORRECT: "Follow the pattern of Normalizer.normalize method"
+   - WRONG: "See lines 45-89 of normalizer.py"
+
+3. AGENT_AS_IMPLEMENTER: Each agent implements based on requirements.
+   - Agents are implementers, NOT copy-pasters
+   - Let agents investigate the codebase and design solutions
+
+4. INTEGRATION_AS_REVIEWER: A5 agent is the Merge Reviewer.
+   - Validates all agent outputs
+   - Runs tests: `pytest tests/ -v`
+   - Runs type checks: `mypy src/`
+   - Runs linting: `ruff check src/ tests/`
+   - Cross-checks acceptance criteria
+   - Authorizes or blocks merge
+
+===============================================================================
+USER REQUEST (EDIT ONLY THIS SECTION)
+===============================================================================
+Request Type: <NEW_FEATURE | BUGFIX | REFACTOR | DOCS | PERF | SECURITY | DEBUG | OTHER>
+Short Slug (kebab-case, 2–5 words): <e.g. lexicon-expansion>
+High-level Summary (1–3 paragraphs): 
+<PASTE THE REQUEST HERE>
+
+Constraints / Notes (optional):
+- <constraint 1>
+- <constraint 2>
+
+Preferred Delivery Mode: <PR | DIRECT_PUSH>
+Target Base Branch: <main | feature/<name> | other>
+
+===============================================================================
+ROUTING — WHICH PROMPT TO READ
+===============================================================================
+Based on Request Type:
+
+NEW_FEATURE / REFACTOR / DOCS / PERF / SECURITY / DEBUG / OTHER:
+  → Read and apply: `workpacks/WORKPACK_GENERATION_PROMPT.md`
+
+BUGFIX:
+  → Read and apply: `workpacks/WORKPACK_BUG_REPORT_PROMPT.md`
+
+Always also read:
+  → `workpacks/README.md`
+  → `workpacks/_template/prompts/PROMPT_STYLE_GUIDE.md`
+
+===============================================================================
+TASK: CREATE / UPDATE THE WORKPACK
+===============================================================================
+1) Determine workpack folder name:
+   `workpacks/YYYY-MM-DD_<category>_<slug>/`
+
+   Category mapping:
+   - NEW_FEATURE → feature
+   - BUGFIX → bugfix
+   - REFACTOR → refactor
+   - DOCS → docs
+   - PERF → perf
+   - SECURITY → security
+   - DEBUG → debug
+   - OTHER → closest match
+
+2) If workpack does not exist:
+   - Create using rules from Generation or Bug Report prompt
+   - Set Protocol Version: 3 in `00_request.md`
+   - Create `outputs/.gitkeep`
+
+3) If workpack exists (BUGFIX follow-up):
+   - Add next B-series prompt (B1, B2, …)
+   - Update `01_plan.md` and `99_status.md`
+
+===============================================================================
+PROMPT GENERATION RULES (Protocol v3)
+===============================================================================
+When generating prompts, you MUST:
+
+✅ DO:
+- Write clear Objective describing WHAT to accomplish
+- Include Reference Points with semantic names (class/method names)
+- Write Implementation Requirements as behavioral specs
+- Use Contracts section for new interfaces (signatures only)
+- Include verification commands that can be run
+
+❌ DO NOT:
+- Include complete code implementations
+- Reference line numbers
+- Propose specific code solutions
+- Write code the agent should copy-paste
+
+Example of WRONG prompt content:
+```
+## Step 3: Create Service
+```python
+class PhonemeService:
+    def __init__(self):
+        # 50 lines of code
+```
+```
+
+Example of CORRECT prompt content:
+```
+## Implementation Requirements
+
+Create `PhonemeService` class in `src/furlan_g2p/g2p/`:
+- Follow the pattern of `Normalizer` class in `src/furlan_g2p/normalization/`
+- Accept configuration via constructor injection
+- All public methods must have type hints
+- Raise ValueError for invalid input, not silent failures
+```
+
+===============================================================================
+CRITICAL RULES (Protocol v3 Compliance)
+===============================================================================
+A) No clarifying questions:
+   - Make reasonable assumptions
+   - Document assumptions in `handoff.known_issues`
+   - If truly blocking, STOP and escalate
+
+B) outputs/ is mandatory:
+   - Every completed prompt needs `outputs/<PROMPT>.json`
+   - Must conform to `workpacks/WORKPACK_OUTPUT_SCHEMA.json`
+
+C) Completion requires BOTH:
+   1) `99_status.md` marks prompt complete (✅ / 🟢)
+   2) `outputs/<PROMPT>.json` exists
+
+D) A5 is Merge Reviewer:
+   - Runs pytest, mypy, ruff before merge
+   - Validates all agent outputs
+   - Cross-checks acceptance criteria
+
+E) FurlanG2P-Specific:
+   - Always check `AGENTS.md` for coding standards
+   - Consult `docs/references.md` for business logic changes
+   - Update both `README.md` and `README-pypi.md` if user-facing changes
+
+===============================================================================
+END — START EXECUTING
+===============================================================================
+Now execute the workflow based on the REQUEST TYPE above.

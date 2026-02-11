@@ -4,6 +4,33 @@ All notable changes to this project are documented in this file. The project
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions
 adapted for a lightweight semantic versioning scheme.
 
+## [0.2.0] - 2026-02-11
+
+### Added
+- Hybrid G2P architecture foundations with:
+  lexicon schema/storage/builder modules, dialect-aware lookup, evaluation
+  metrics, and optional ML exception-model interfaces.
+- New `lexicon` CLI group with:
+  `build`, `info`, `export`, and `validate` subcommands.
+- New CLI commands:
+  `evaluate` (WER/PER/stress reporting) and `coverage`
+  (lexicon/rule/OOV coverage analysis).
+- New packages/modules:
+  `src/furlan_g2p/lexicon/`,
+  `src/furlan_g2p/evaluation/`,
+  `src/furlan_g2p/ml/`,
+  and supporting CLI adapters.
+- Optional `[ml]` dependency group in `pyproject.toml`.
+
+### Changed
+- Pipeline and G2P paths now support dialect-conditioned lookup and per-request
+  dialect propagation.
+- Documentation updated for hybrid workflows (architecture, usage, business
+  logic, references, README variants).
+
+### Breaking changes
+- None.
+
 ## [0.1.1] - 2025-09-18
 
 ### Fixed

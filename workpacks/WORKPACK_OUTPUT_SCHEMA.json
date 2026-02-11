@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workpacks/WORKPACK_OUTPUT_SCHEMA.json",
+  "title": "Workpack Agent Handoff Output",
+  "description": "Structured handoff produced by each agent after completing a prompt. Required for Workpack Protocol v3.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "workpack",
+    "prompt",
+    "component",
+    "delivery_mode",
+    "branch",
+    "changes",
+    "verification",
+    "handoff"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version for this output payload.",
+      "pattern": "^1\\.[0-9]+$",
+      "examples": ["1.0"]
+    },
+    "workpack": {
+      "type": "string",
+      "description": "Workpack folder name (YYYY-MM-DD_<category>_<slug>).",
+      "minLength": 5
+    },
+    "prompt": {
+      "type": "string",
+      "description": "Prompt basename without extension (e.g., A1_library, B3_g2p_edge_case).",
+      "minLength": 3
+    },
+    "component": {
+      "type": "string",
+      "description": "Affected component.",
+      "enum": ["bootstrap", "library", "cli", "tests", "docs", "integration"]
+    },
+    "delivery_mode": {
+      "type": "string",
+      "description": "How changes are delivered.",
+      "enum": ["pr", "direct_push"]
+    },
+    "branch": {
+      "type": "object",
+      "required": ["base", "work", "merge_target"],
+      "properties": {
+        "base": { "type": "string", "description": "Base branch name, typically main or feature root." },
+        "work": { "type": "string", "description": "Working branch used by the agent." },
+        "merge_target": { "type": "string", "description": "Branch the agent intends to merge into (feature root or main)." }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Links to PRs, commits, or other artifacts.",
+      "properties": {
+        "pr_url": { "type": "string", "description": "PR URL if delivery_mode=pr." },
+        "commit_shas": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of relevant commit SHAs."
+        }
+      },
+      "additionalProperties": true
+    },
+    "changes": {
+      "type": "object",
+      "required": ["files_modified", "files_created", "contracts_changed", "breaking_change"],
+      "properties": {
+        "files_modified": { "type": "array", "items": { "type": "string" } },
+        "files_created": { "type": "array", "items": { "type": "string" } },
+        "contracts_changed": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Any API/class/function contracts impacted (file paths or identifiers)."
+        },
+        "breaking_change": { "type": "boolean", "description": "True if a breaking change was introduced." }
+      },
+      "additionalProperties": true
+    },
+    "verification": {
+      "type": "object",
+      "required": ["commands"],
+      "properties": {
+        "commands": {
+          "type": "array",
+          "description": "Commands executed by the agent and outcomes.",
+          "items": {
+            "type": "object",
+            "required": ["cmd", "result"],
+            "properties": {
+              "cmd": { "type": "string" },
+              "result": { "type": "string", "enum": ["pass", "fail", "not_run"] },
+              "notes": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "regression_added": {
+          "type": "boolean",
+          "description": "True if a regression test was added for this change."
+        }
+      },
+      "additionalProperties": true
+    },
+    "handoff": {
+      "type": "object",
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Brief summary of what was accomplished."
+        },
+        "known_issues": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Any known issues or limitations."
+        },
+        "next_steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Suggested follow-up actions."
+        },
+        "notes_for_integration": {
+          "type": "string",
+          "description": "Special notes for the A5 integration agent."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

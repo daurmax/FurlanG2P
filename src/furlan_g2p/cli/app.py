@@ -15,6 +15,8 @@ from ..phonology import canonicalize_ipa
 from ..services.io_service import IOService
 from ..services.pipeline import PipelineService
 from ..tokenization.tokenizer import Tokenizer
+from .evaluate import coverage_command, evaluate_command
+from .lexicon import lexicon as lexicon_group
 
 _NORMALIZER = Normalizer()
 _LEXICON = Lexicon.load_seed()
@@ -50,6 +52,9 @@ def cli() -> None:
     """FurlanG2P command-line interface (skeleton)."""
     # click requires a function body
     pass
+
+
+cli.add_command(lexicon_group)
 
 
 @cli.command("normalize")
@@ -200,6 +205,10 @@ def cmd_ipa(
             ipa_parts.append(ipa)
         out_tokens.append("".join(ipa_parts))
     click.echo(sep.join(out_tokens))
+
+
+cli.add_command(evaluate_command)
+cli.add_command(coverage_command)
 
 
 def main() -> None:  # pragma: no cover - small wrapper

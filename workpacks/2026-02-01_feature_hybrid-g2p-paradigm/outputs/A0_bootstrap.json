@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A0_bootstrap",
+  "component": "bootstrap",
+  "delivery_mode": "direct_push",
+  "branch": {
+    "base": "main",
+    "work": "feature/hybrid-g2p-paradigm",
+    "merge_target": "main"
+  },
+  "artifacts": {
+    "commit_shas": []
+  },
+  "changes": {
+    "files_modified": [],
+    "files_created": [
+      "workpacks/2026-02-01_feature_hybrid-g2p-paradigm/outputs/A0_bootstrap.json"
+    ],
+    "contracts_changed": [],
+    "breaking_change": false
+  },
+  "verification": {
+    "commands": [
+      {
+        "cmd": "git status --porcelain",
+        "result": "pass"
+      },
+      {
+        "cmd": "git pull origin main",
+        "result": "pass",
+        "notes": "Required escalated permissions to update .git metadata."
+      },
+      {
+        "cmd": "git checkout feature/hybrid-g2p-paradigm",
+        "result": "pass",
+        "notes": "Required escalated permissions to update .git metadata."
+      },
+      {
+        "cmd": "git push -u origin feature/hybrid-g2p-paradigm",
+        "result": "pass",
+        "notes": "Required escalated permissions for network access."
+      },
+      {
+        "cmd": "git branch -a | Select-String \"hybrid-g2p-paradigm\"",
+        "result": "pass"
+      }
+    ],
+    "regression_added": false
+  },
+  "handoff": {
+    "summary": "Verified clean working tree, updated main, switched to existing feature branch, and pushed it to origin.",
+    "known_issues": [],
+    "next_steps": [
+      "Proceed with parallel workpack agents on feature/hybrid-g2p-paradigm."
+    ],
+    "notes_for_integration": "Branch feature/hybrid-g2p-paradigm now tracks origin and matches main commit b7f75274af207fadd05a926e8c4f3c7dd4e140ea."
+  }
+}

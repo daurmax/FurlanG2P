@@ -8,6 +8,16 @@ from ..phonology import PHONEME_INVENTORY, canonicalize_ipa
 
 Dialect = Literal["central", "western_codroipo", "carnia"]
 
+_DIALECT_ALIASES: dict[str, Dialect] = {
+    "central": "central",
+    "cent": "central",
+    "western": "western_codroipo",
+    "west": "western_codroipo",
+    "western_codroipo": "western_codroipo",
+    "carnic": "carnia",
+    "carnia": "carnia",
+}
+
 # Minimal symbol maps (intentionally incomplete).
 # This is a *starter* to make a few words work by rules; gold items still come from the lexicon.
 _LONG_VOWELS = {
@@ -25,6 +35,15 @@ def _is_vowel(ch: str) -> bool:
 
 def _between_vowels(s: str, i: int) -> bool:
     return 0 < i < len(s) - 1 and _is_vowel(s[i - 1]) and _is_vowel(s[i + 1])
+
+
+def _resolve_dialect(dialect: str | None, fallback: Dialect) -> Dialect:
+    if dialect is None:
+        return fallback
+    value = dialect.strip().lower()
+    if not value:
+        return fallback
+    return _DIALECT_ALIASES.get(value, fallback)
 
 
 def orth_to_ipa_basic(word: str, dialect: Dialect = "central") -> str:
@@ -150,17 +169,25 @@ class PhonemeRules:
         self._inventory = set(phoneme_inventory or PHONEME_INVENTORY)
         self.dialect: Dialect = dialect
 
-    def apply(self, word: str) -> list[str]:
+    def apply(self, word: str, dialect: str | None = None) -> list[str]:
         """Return a list of phoneme symbols for ``word``.
 
         The method performs a deterministic orthography-to-IPA mapping and
         segments the result into canonical phonemes.  Unknown symbols raise
         ``ValueError`` to surface gaps in the inventory.
+
+        Parameters
+        ----------
+        word:
+            Input token.
+        dialect:
+            Optional per-call dialect override.
         """
 
         if not word:
             return []
 
+        active_dialect = _resolve_dialect(dialect, self.dialect)
         s = unicodedata.normalize("NFC", word.lower())
         out: list[str] = []
         i = 0
@@ -204,9 +231,9 @@ class PhonemeRules:
                 nxt = s[i + 1] if i + 1 < len(s) else ""
                 out.append("dʒ" if nxt in "eêiî" else "g")
             elif ch == "z":
-                out.append("ts" if self.dialect == "carnia" else "dz")
+                out.append("ts" if active_dialect == "carnia" else "dz")
             elif ch == "s":
-                out.append("z" if _between_vowels(s, i) and self.dialect != "carnia" else "s")
+                out.append("z" if _between_vowels(s, i) and active_dialect != "carnia" else "s")
             elif ch in _LONG_VOWELS:
                 out.append(_LONG_VOWELS[ch])
             elif ch in "aeiouàèìòù":

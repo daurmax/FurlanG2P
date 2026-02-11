@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A7_cli_evaluate",
+  "component": "cli",
+  "delivery_mode": "pr",
+  "branch": {
+    "base": "feature/hybrid-g2p-paradigm",
+    "work": "agent/a7-cli-evaluate",
+    "merge_target": "feature/hybrid-g2p-paradigm"
+  },
+  "artifacts": {
+    "pr_url": "https://github.com/daurmax/FurlanG2P/pull/26",
+    "commit_shas": [
+      "0234c248b30e68dda782ffdaedc6c43aa1c63a9a"
+    ]
+  },
+  "changes": {
+    "files_modified": [
+      "src/furlan_g2p/cli/app.py",
+      "README.md",
+      "README-pypi.md",
+      "docs/usage.md",
+      "docs/architecture.md",
+      "docs/business_logic.md"
+    ],
+    "files_created": [
+      "src/furlan_g2p/cli/evaluate.py",
+      "src/furlan_g2p/cli/lexicon.py",
+      "tests/test_cli_evaluate_coverage.py",
+      "tests/test_cli_lexicon.py",
+      "workpacks/2026-02-01_feature_hybrid-g2p-paradigm/outputs/A7_cli_evaluate.json"
+    ],
+    "contracts_changed": [
+      "src/furlan_g2p/cli/app.py: CLI command registry includes evaluate and coverage",
+      "src/furlan_g2p/cli/evaluate.py: new evaluate/coverage command interfaces"
+    ],
+    "breaking_change": false
+  },
+  "verification": {
+    "commands": [
+      {
+        "cmd": "py -3 -m ruff check src/furlan_g2p/cli/evaluate.py src/furlan_g2p/cli/app.py tests/test_cli_evaluate_coverage.py",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m mypy src/furlan_g2p/cli/",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m pytest tests/test_cli_evaluate_coverage.py tests/test_cli_pipeline_commands.py tests/test_cli_errors.py tests/test_cli_ipa.py -q",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m furlan_g2p.main evaluate --help",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m furlan_g2p.main coverage --help",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m pytest -q",
+        "result": "fail",
+        "notes": "Environment-specific failure in tests/test_cli_help.py because furlang2p executable is not on PATH (shutil.which returns None)."
+      }
+    ],
+    "regression_added": true
+  },
+  "handoff": {
+    "summary": "Implemented new CLI commands `evaluate` and `coverage` as thin adapters over the evaluation, lexicon, rules and pipeline modules; added text/JSON output, optional detailed file output, verbose error/OOV reporting, command registration, and focused CLI tests. Included the lexicon CLI module/tests required by the current app command registry in this branch.",
+    "known_issues": [
+      "Optional compare command was not implemented (out of scope).",
+      "Full suite execution depends on furlang2p being available on PATH for tests/test_cli_help.py in this environment."
+    ],
+    "next_steps": [
+      "Install the package entry point in the active environment (pip install -e .[dev]) and rerun full pytest.",
+      "Review and merge PR #26 into feature/hybrid-g2p-paradigm.",
+      "If needed, add snapshot tests for text output formatting of evaluate/coverage commands."
+    ],
+    "notes_for_integration": "CLI output payloads include detailed records in output files while stdout remains concise by default; evaluate honors per-row dialect from gold TSV unless --dialect override is provided."
+  }
+}

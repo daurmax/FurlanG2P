@@ -1,0 +1,103 @@
+{
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "agent_prompt": "A5_ml_interface",
+  "status": "complete",
+  "timestamp": "2026-02-01T00:00:00Z",
+  "summary": "Created ML interface layer with IExceptionModel, ExceptionPrediction dataclass, NullExceptionModel implementation, and [ml] optional extra.",
+  "deliverables": {
+    "created_files": [
+      "src/furlan_g2p/ml/__init__.py",
+      "src/furlan_g2p/ml/interfaces.py",
+      "src/furlan_g2p/ml/null_model.py"
+    ],
+    "modified_files": [
+      "pyproject.toml"
+    ]
+  },
+  "implementation_details": {
+    "interfaces": {
+      "IExceptionModel": {
+        "file": "src/furlan_g2p/ml/interfaces.py",
+        "methods": [
+          "predict(word: str, dialect: str | None) -> ExceptionPrediction | None",
+          "predict_batch(words: list[str], dialect: str | None) -> list[ExceptionPrediction | None]",
+          "is_available() -> bool",
+          "get_model_info() -> dict[str, str | bool | int]"
+        ],
+        "description": "Abstract base class defining contract for ML-based exception models in G2P pipeline"
+      },
+      "ExceptionPrediction": {
+        "file": "src/furlan_g2p/ml/interfaces.py",
+        "type": "dataclass",
+        "fields": [
+          "ipa: str - Predicted IPA transcription with stress",
+          "confidence: float - Model confidence [0.0, 1.0]",
+          "source: str - Model identifier",
+          "alternatives: list[tuple[str, float]] - N-best list with confidences"
+        ],
+        "description": "Result type for ML predictions"
+      },
+      "NullExceptionModel": {
+        "file": "src/furlan_g2p/ml/null_model.py",
+        "description": "Default implementation when ML dependencies not installed. Always returns None for predictions, is_available() returns False.",
+        "behavior": "Allows G2P pipeline to function without optional ML dependencies"
+      }
+    },
+    "import_guards": {
+      "file": "src/furlan_g2p/ml/__init__.py",
+      "mechanism": "Try/except ImportError for torch and transformers",
+      "exports": {
+        "ML_AVAILABLE": "bool flag indicating ML dependency availability",
+        "require_ml()": "Helper function that raises informative ImportError when ML deps missing"
+      },
+      "behavior": "Base install only exports NullExceptionModel; full ML models available with [ml] extra"
+    },
+    "dependencies": {
+      "optional_extra": "ml",
+      "packages": [
+        "torch>=2.0",
+        "transformers>=4.30"
+      ],
+      "note": "Placeholder versions; actual ML model implementation will refine requirements"
+    }
+  },
+  "integration_points": {
+    "pipeline": [
+      "Called after lexicon lookup fails",
+      "Called after rule-based output for reranking/correction",
+      "Confidence threshold determines if prediction is used"
+    ],
+    "usage_pattern": "Default NullExceptionModel allows pipeline to work without ML; real models can be swapped in when [ml] installed"
+  },
+  "acceptance_criteria": {
+    "base_install": "furlan_g2p.ml importable without torch/transformers",
+    "interface_defined": "IExceptionModel ABC with all required methods",
+    "null_implementation": "NullExceptionModel works as default",
+    "ml_extra": "pip install -e .[ml] installs torch and transformers",
+    "import_guards": "ML_AVAILABLE flag reflects actual dependency state",
+    "type_safety": "All code type-hinted for mypy strict mode"
+  },
+  "design_decisions": {
+    "interface_pattern": "Follows ABC style from core/interfaces.py for consistency",
+    "lazy_loading": "Import guards prevent ML deps from slowing base package imports",
+    "graceful_degradation": "NullExceptionModel ensures pipeline never crashes due to missing ML",
+    "batch_support": "predict_batch() enables efficient processing for transformer models",
+    "dialect_aware": "Optional dialect parameter allows future dialect-specific models"
+  },
+  "verification_commands": [
+    "pip install -e .",
+    "python -c \"from furlan_g2p.ml import NullExceptionModel, ML_AVAILABLE; print(f'ML_AVAILABLE={ML_AVAILABLE}')\"",
+    "pip install -e .[ml]",
+    "python -c \"from furlan_g2p.ml import ML_AVAILABLE; assert ML_AVAILABLE\"",
+    "mypy src/furlan_g2p/ml/",
+    "ruff check src/furlan_g2p/ml/"
+  ],
+  "next_steps": [
+    "Implement actual ML model (e.g., BERT-based, transformer G2P)",
+    "Add model loading logic and weight management",
+    "Integrate exception model into pipeline service",
+    "Add CLI commands for ML model operations",
+    "Create training/fine-tuning infrastructure",
+    "Add comprehensive tests for ML components"
+  ]
+}
