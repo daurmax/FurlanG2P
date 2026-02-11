@@ -1,10 +1,12 @@
-"""High-level pipeline service (skeleton)."""
+"""High-level pipeline service."""
 
 from __future__ import annotations
 
 import csv
 
+from ..g2p.lexicon import Lexicon
 from ..g2p.phonemizer import G2PPhonemizer
+from ..lexicon.schema import LexiconConfig
 from ..normalization.normalizer import Normalizer
 from ..phonology.stress import StressAssigner
 from ..phonology.syllabifier import Syllabifier
@@ -12,16 +14,38 @@ from ..tokenization.tokenizer import Tokenizer
 
 
 class PipelineService:
-    """Orchestrates normalization -> tokenization -> G2P -> phonology."""
+    """Orchestrates normalization -> tokenization -> G2P -> phonology.
 
-    def __init__(self) -> None:
+    Parameters
+    ----------
+    default_dialect:
+        Default dialect applied when requests do not provide one.
+    lexicon_config:
+        Lexicon lookup behavior configuration.
+    phonemizer:
+        Optional custom phonemizer instance.
+    """
+
+    def __init__(
+        self,
+        default_dialect: str | None = None,
+        lexicon_config: LexiconConfig | None = None,
+        phonemizer: G2PPhonemizer | None = None,
+    ) -> None:
+        self.lexicon_config = lexicon_config or LexiconConfig(default_dialect=default_dialect)
+        self.default_dialect = default_dialect or self.lexicon_config.default_dialect
+
         self.normalizer = Normalizer()
         self.tokenizer = Tokenizer()
-        self.phonemizer = G2PPhonemizer()
+        self.phonemizer = phonemizer or G2PPhonemizer(lexicon=Lexicon(config=self.lexicon_config))
         self.syllabifier = Syllabifier()
         self.stress = StressAssigner()
 
-    def process_text(self, text: str) -> tuple[str, list[str]]:
+    def process_text(
+        self,
+        text: str,
+        dialect: str | None = None,
+    ) -> tuple[str, list[str]]:
         """Return ``(normalized_text, phoneme_sequence_as_list)``.
 
         Examples
@@ -30,24 +54,41 @@ class PipelineService:
         ('cjase', ['ˈc', 'a', 'z', 'e'])
         """
 
+        active_dialect = dialect or self.default_dialect
+
         norm = self.normalizer.normalize(text)
         sentences = self.tokenizer.split_sentences(norm)
         tokens: list[str] = []
-        for sent in sentences:
-            tokens.extend(self.tokenizer.split_words(sent))
-        phons = self.phonemizer.to_phonemes(tokens)
-        syllables = self.syllabifier.syllabify(phons)
+        for sentence in sentences:
+            tokens.extend(self.tokenizer.split_words(sentence))
+        phonemes = self.phonemizer.to_phonemes(tokens, dialect=active_dialect)
+        syllables = self.syllabifier.syllabify(phonemes)
         stressed = self.stress.assign_stress(syllables)
-        flat = [p for syl in stressed for p in syl]
+        flat = [phoneme for syllable in stressed for phoneme in syllable]
         return norm, flat
 
-    def process_csv(self, input_csv_path: str, output_csv_path: str, delimiter: str = "|") -> None:
+    def process_csv(
+        self,
+        input_csv_path: str,
+        output_csv_path: str,
+        delimiter: str = "|",
+        dialect: str | None = None,
+        dialect_column: int | None = None,
+    ) -> None:
         """Phonemize an LJSpeech-like metadata CSV file.
 
-        The input is expected to contain at least two columns: an identifier
-        and the text to phonemize.  The output file will contain the same
-        columns with an additional field containing the space-separated
-        phoneme sequence.
+        Parameters
+        ----------
+        input_csv_path:
+            Input CSV path.
+        output_csv_path:
+            Output CSV path.
+        delimiter:
+            CSV delimiter.
+        dialect:
+            Optional fallback dialect applied to every row.
+        dialect_column:
+            Optional zero-based column index containing per-row dialect tags.
         """
 
         with (
@@ -59,8 +100,18 @@ class PipelineService:
             for row in reader:
                 if len(row) < 2:
                     continue
-                norm, phons = self.process_text(row[1])
-                writer.writerow([row[0], norm, " ".join(phons)])
+
+                row_dialect = dialect
+                if (
+                    dialect_column is not None
+                    and dialect_column >= 0
+                    and len(row) > dialect_column
+                    and row[dialect_column].strip()
+                ):
+                    row_dialect = row[dialect_column].strip()
+
+                norm, phonemes = self.process_text(row[1], dialect=row_dialect)
+                writer.writerow([row[0], norm, " ".join(phonemes)])
 
 
 __all__ = ["PipelineService"]

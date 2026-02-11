@@ -35,6 +35,10 @@ dev = [
   "black>=24.4.0",
   "types-click>=7.1.8",
 ]
+ml = [
+  "torch>=2.0",
+  "transformers>=4.30",
+]
 
 [project.urls]
 Homepage = "https://github.com/daurmax/FurlanG2P"

@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A4_dialect_pipeline",
+  "status": "complete",
+  "timestamp": "2026-02-11T12:21:30.7585788+01:00",
+  "summary": "Implemented dialect-aware lexicon lookup with universal fallback, integrated dialect propagation through phonemizer and pipeline services, and preserved legacy G2P lexicon API compatibility.",
+  "changes": {
+    "files_created": [
+      "src/furlan_g2p/lexicon/lookup.py"
+    ],
+    "files_modified": [
+      "src/furlan_g2p/g2p/lexicon.py",
+      "src/furlan_g2p/g2p/phonemizer.py",
+      "src/furlan_g2p/g2p/rules.py",
+      "src/furlan_g2p/lexicon/__init__.py",
+      "src/furlan_g2p/lexicon/storage.py",
+      "src/furlan_g2p/services/pipeline.py",
+      "src/furlan_g2p/core/interfaces.py"
+    ],
+    "breaking_change": false
+  },
+  "implementation_details": {
+    "dialect_aware_lookup": {
+      "module": "src/furlan_g2p/lexicon/lookup.py",
+      "features": [
+        "(lemma, dialect) indexing with normalized lookup keys",
+        "Dialect-specific lookup with configurable fallback_to_universal behavior",
+        "LRU-cached lookup path keyed by word+dialect",
+        "JSONL and TSV loading via detect_format/read_jsonl/read_tsv",
+        "Legacy seed TSV compatibility (word, ipa, variants_json, source)",
+        "stats(), get_alternatives(), has_entry() contracts implemented"
+      ]
+    },
+    "legacy_compatibility": {
+      "module": "src/furlan_g2p/g2p/lexicon.py",
+      "notes": [
+        "Retained Lexicon.get(), Lexicon.get_entry(), Lexicon.load_seed(), __contains__, __len__, items",
+        "Added dialect-aware optional parameters without breaking existing no-dialect calls",
+        "Added Lexicon.load(path, config) for TSV/JSONL loading",
+        "Legacy LexiconEntry preserved (word/ipa/variants/source), extended with optional dialect"
+      ]
+    },
+    "phonemizer_integration": {
+      "module": "src/furlan_g2p/g2p/phonemizer.py",
+      "notes": [
+        "to_phonemes(tokens, dialect=None) signature implemented",
+        "Uses schema entries from dialect-aware lexicon path",
+        "Logs when dialect lookup falls back to universal entry",
+        "Rule fallback now receives dialect override"
+      ]
+    },
+    "rules_and_pipeline": {
+      "rules_module": "src/furlan_g2p/g2p/rules.py",
+      "pipeline_module": "src/furlan_g2p/services/pipeline.py",
+      "notes": [
+        "Rule engine supports per-call dialect override with alias normalization (central/western/carnic)",
+        "PipelineService accepts default dialect + lexicon config",
+        "process_text supports per-request dialect override",
+        "process_csv supports global dialect or optional dialect_column overrides"
+      ]
+    }
+  },
+  "verification": {
+    "commands": [
+      {
+        "cmd": "py -3 -c \"from furlan_g2p.lexicon import DialectAwareLexicon; print('OK')\"",
+        "result": "pass",
+        "details": "OK"
+      },
+      {
+        "cmd": "py -3 -m pytest tests/test_pipeline_basic.py tests/test_lexicon_gold.py tests/test_lexicon_gold_extra.py tests/test_pipeline_golden.py -q",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m mypy src/furlan_g2p/g2p/ src/furlan_g2p/lexicon/ src/furlan_g2p/services/",
+        "result": "pass",
+        "details": "Success: no issues found in 14 source files"
+      },
+      {
+        "cmd": "py -3 -m ruff check src/furlan_g2p/g2p/ src/furlan_g2p/lexicon/ src/furlan_g2p/services/",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m pytest -q",
+        "result": "pass_with_env_note",
+        "details": "Initial failure due missing furlang2p on PATH in test_cli_help.py; passed after prepending %APPDATA%\\Python\\Python313\\Scripts to PATH"
+      }
+    ]
+  },
+  "design_notes": [
+    "Dialect alias normalization bridges schema dialect labels and rule-engine dialect labels.",
+    "Lookup cache key includes dialect to preserve performance under mixed-dialect workloads.",
+    "No CLI changes were introduced in this task to keep A6/A7 scope untouched."
+  ],
+  "pr": {
+    "target_branch": "feature/hybrid-g2p-paradigm",
+    "status": "created",
+    "url": "https://github.com/daurmax/FurlanG2P/pull/25",
+    "head_branch": "agent/a4-dialect-pipeline"
+  }
+}
