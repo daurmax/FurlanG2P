@@ -9,8 +9,8 @@ together provide a `furlang2p` command-line tool. The normalizer
 spells out numbers up to 999 999 999 999 and can expand units, abbreviations and
 acronyms, with rules loaded from JSON or YAML files, while the tokenizer can
 skip sentence splits after configurable abbreviations.  The CLI also offers
-subcommands to normalize text, output phoneme sequences and batch phonemize
-metadata CSV files.
+subcommands to normalize text, output phoneme sequences, run quality/coverage
+analysis and batch phonemize metadata CSV files.
 
 ## Installation
 
@@ -64,6 +64,27 @@ Other available subcommands:
 
   ```bash
   furlang2p phonemize-csv --in metadata.csv --out out.csv
+  ```
+
+- Evaluate predictions against a gold TSV:
+
+  ```bash
+  furlang2p evaluate gold.tsv --format text
+  ```
+
+- Analyze lexicon/rule coverage over a wordlist:
+
+  ```bash
+  furlang2p coverage words.txt --show-oov --format json
+  ```
+
+- Lexicon workflow (build/info/export/validate):
+
+  ```bash
+  furlang2p lexicon build source.tsv -o lexicon.jsonl --source-type tsv
+  furlang2p lexicon info lexicon.jsonl
+  furlang2p lexicon export lexicon.jsonl lexicon.tsv -f tsv
+  furlang2p lexicon validate lexicon.jsonl --strict
   ```
 
 The repository also ships a convenience script providing the same batch

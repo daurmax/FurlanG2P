@@ -9,12 +9,13 @@ accounts for long vowels and marked accents, and an IPA canonicalizer. The
 normalizer can spell out numbers up to 999 999 999 999 and expand units,
 abbreviations and acronyms, with rules loadable from JSON or YAML files. These
 pieces back a `furlang2p` CLI with subcommands for normalization,
-G2P conversion and batch phonemization of CSV files.
+G2P conversion, evaluation/coverage analysis and batch phonemization of CSV files.
 
 ## Project layout
 
 - `src/furlan_g2p/cli/` – command-line interface entry points.
 - `src/furlan_g2p/g2p/` – lexicon, rules and simple converters.
+- `src/furlan_g2p/lexicon/` – lexicon schema, ingestion and storage helpers.
 - `src/furlan_g2p/normalization/` – configurable text normalizer.
 - `src/furlan_g2p/tokenization/` – sentence and word tokenizer.
 - `src/furlan_g2p/phonology/` – canonical IPA helpers, syllabifier and stress
@@ -95,6 +96,24 @@ For detailed documentation on component interactions and algorithmic design, con
    - Phonemize an LJSpeech-style CSV:
      ```bash
      furlang2p phonemize-csv --in metadata.csv --out out.csv
+     ```
+
+   - Evaluate predictions against a gold TSV:
+     ```bash
+     furlang2p evaluate tests/data/gold.tsv
+     ```
+
+   - Measure lexicon/rule coverage over a wordlist:
+     ```bash
+     furlang2p coverage tests/data/wordlist.txt --show-oov
+     ```
+
+   - Build, inspect, export and validate lexicons:
+     ```bash
+     furlang2p lexicon build source.tsv -o lexicon.jsonl --source-type tsv
+     furlang2p lexicon info lexicon.jsonl
+     furlang2p lexicon export lexicon.jsonl lexicon.tsv -f tsv
+     furlang2p lexicon validate lexicon.jsonl --strict
      ```
 
    The same batch operation is available as a standalone script:

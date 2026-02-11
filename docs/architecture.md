@@ -11,6 +11,8 @@ FurlanG2P is organised as a set of small, typed modules that compose a text‑to
 | `normalization` | deterministic text normalisation and number spelling | rules layer extensible via `NormalizerConfig` | prototype |
 | `tokenization` | sentence and word tokeniser | regex engine with abbreviation sentinel replacement | prototype |
 | `g2p` | seed lexicon, letter‑to‑sound rules and phonemiser | LRU‑cached lookups, dialect flag, inventory validation | experimental |
+| `lexicon` | lexicon schema, ingestion and storage I/O | WikiPron parsing, IPA canonicalization, TSV/JSONL export | experimental |
+| `evaluation` | metric computation (WER, PER, stress accuracy) | evaluator + typed aggregate/per-word results | experimental |
 | `phonology` | IPA canonicaliser, syllabifier and stress assigner | onset‑maximisation, heuristic stress rules | experimental |
 | `services` | orchestrating pipeline and simple file I/O | service layer encapsulating pipeline steps | minimal |
 | `cli` | `click` entry points and subcommands | thin wrapper over services | minimal |
@@ -24,3 +26,6 @@ FurlanG2P is organised as a set of small, typed modules that compose a text‑to
 - **Service layer** – `services.PipelineService` composes normalisation → tokenisation → G2P → phonology into a reusable pipeline.
 - **Resource packaging** – `g2p.Lexicon` ships a TSV lexicon inside the wheel and accesses it with `importlib.resources`.
 - **Configuration via dataclasses** – normalisation and tokenisation behaviour is configured through dataclasses loaded from JSON or YAML files.
+- **Lexicon ingestion** – `lexicon.LexiconBuilder` streams WikiPron TSV sources, canonicalises IPA symbols and exports merged lexicons.
+- **Evaluation workflow** – `evaluation.Evaluator` compares predicted/gold IPA pairs and powers CLI quality reporting.
+- **Thin CLI adapters** – `cli.lexicon` exposes build/info/export/validate commands while delegating ingestion and validation to `lexicon` library modules.

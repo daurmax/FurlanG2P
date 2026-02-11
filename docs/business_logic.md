@@ -39,3 +39,19 @@ Phonological post‑processing standardises and analyses the IPA output:
 ## Pipeline
 
 `PipelineService` orchestrates the modules in the sequence normalisation → sentence split → word split → G2P → syllabification → stress assignment and returns the normalised text together with the final phoneme sequence, enabling batch or interactive processing through the CLI.
+
+## Evaluation and Coverage
+
+The `evaluation` module exposes `Evaluator`, which computes:
+
+- **WER**: proportion of words where normalized predicted IPA differs from gold IPA.
+- **PER**: phoneme-level Levenshtein distance divided by total gold phoneme count.
+- **Stress accuracy**: agreement of primary stress marker position (`ˈ`) over items where gold stress is marked.
+
+The CLI `evaluate` command uses `PipelineService` to generate predictions and delegates all metric calculations to `Evaluator`.
+
+The CLI `coverage` command classifies each input word as:
+
+- **Lexicon hit** when `Lexicon` finds an entry (dialect-aware lookup with universal fallback).
+- **Rule-only** when no lexicon entry exists but `PhonemeRules` can generate a valid phoneme sequence.
+- **OOV** when neither lexicon nor rules yield a pronunciation.

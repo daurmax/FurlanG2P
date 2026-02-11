@@ -54,4 +54,15 @@ The ``furlang2p`` command groups several subcommands:
 furlang2p normalize "CJASE 1964 kg"      # text normalisation
 furlang2p g2p "Cjase"                    # phoneme sequence
 furlang2p phonemize-csv --in metadata.csv --out out.csv
+furlang2p evaluate gold.tsv               # WER/PER/stress metrics
+furlang2p coverage words.txt --show-oov  # lexicon/rule coverage
+```
+
+Lexicon preparation commands are available under ``lexicon``:
+
+```bash
+furlang2p lexicon build source.tsv -o lexicon.jsonl --source-type tsv
+furlang2p lexicon info lexicon.jsonl
+furlang2p lexicon export lexicon.jsonl lexicon.tsv -f tsv
+furlang2p lexicon validate lexicon.jsonl --strict
 ```
