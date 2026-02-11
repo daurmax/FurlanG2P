@@ -9,6 +9,12 @@
     "work": "agent/a9-docs",
     "merge_target": "feature/hybrid-g2p-paradigm"
   },
+  "artifacts": {
+    "pr_url": "https://github.com/daurmax/FurlanG2P/pull/27",
+    "commit_shas": [
+      "738c9e42f80ebcba630fb9356ba0e367d393f4ab"
+    ]
+  },
   "changes": {
     "files_modified": [
       "README.md",
