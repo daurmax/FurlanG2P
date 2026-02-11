@@ -12,7 +12,8 @@
   "artifacts": {
     "pr_url": "https://github.com/daurmax/FurlanG2P/pull/27",
     "commit_shas": [
-      "738c9e42f80ebcba630fb9356ba0e367d393f4ab"
+      "738c9e42f80ebcba630fb9356ba0e367d393f4ab",
+      "fc7e339c387d4a95f84eb467df0ca2cc0f4103fe"
     ]
   },
   "changes": {
