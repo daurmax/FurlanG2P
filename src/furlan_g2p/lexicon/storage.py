@@ -73,15 +73,8 @@ def read_tsv(path: Path, format: FormatType = "simple") -> list[LexiconEntry]:
     True
     """
     entries: list[LexiconEntry] = []
-    
+
     with path.open("r", encoding="utf-8") as f:
-        # Peek at first line to detect format
-        first_line = f.readline()
-        f.seek(0)
-        
-        # Count tabs to determine format
-        num_fields = first_line.count("\t") + 1 if first_line else 0
-        
         reader = csv.reader(f, delimiter="\t")
         
         for line_num, row in enumerate(reader, start=1):

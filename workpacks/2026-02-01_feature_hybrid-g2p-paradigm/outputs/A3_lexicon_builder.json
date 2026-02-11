@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A3_lexicon_builder",
+  "component": "library",
+  "delivery_mode": "pr",
+  "branch": {
+    "base": "main",
+    "work": "feature/hybrid-g2p-paradigm",
+    "merge_target": "feature/hybrid-g2p-paradigm"
+  },
+  "changes": {
+    "files_modified": [
+      "src/furlan_g2p/core/interfaces.py",
+      "src/furlan_g2p/lexicon/__init__.py",
+      "docs/architecture.md",
+      "README.md"
+    ],
+    "files_created": [
+      "src/furlan_g2p/data/ipa_mapping.tsv",
+      "src/furlan_g2p/lexicon/builder.py",
+      "src/furlan_g2p/lexicon/canonicalizer.py",
+      "src/furlan_g2p/lexicon/wikipron.py"
+    ],
+    "contracts_changed": [
+      "src/furlan_g2p/core/interfaces.py:ILexiconBuilder",
+      "src/furlan_g2p/lexicon/__init__.py"
+    ],
+    "breaking_change": false
+  },
+  "verification": {
+    "commands": [
+      {
+        "cmd": "pip install -e \".[dev]\"",
+        "result": "not_run",
+        "notes": "Not run in this environment."
+      },
+      {
+        "cmd": "python -c \"from furlan_g2p.lexicon import LexiconBuilder; print('OK')\"",
+        "result": "not_run",
+        "notes": "Not run in this environment."
+      },
+      {
+        "cmd": "python -c \"from furlan_g2p.lexicon.canonicalizer import IPACanonicalize; print('OK')\"",
+        "result": "not_run",
+        "notes": "Not run in this environment."
+      },
+      {
+        "cmd": "mypy src/furlan_g2p/lexicon/",
+        "result": "not_run",
+        "notes": "Not run in this environment."
+      },
+      {
+        "cmd": "ruff check src/furlan_g2p/lexicon/",
+        "result": "not_run",
+        "notes": "Not run in this environment."
+      }
+    ],
+    "regression_added": false
+  },
+  "handoff": {
+    "summary": "Added a configurable IPA canonicalizer, WikiPron TSV parser, and LexiconBuilder with merge/validation/export support; exposed new lexicon APIs and documented the new module.",
+    "known_issues": [
+      "Default IPA mapping aligns with the current phoneme inventory (script g maps to g); adjust the mapping/inventory if ɡ should be canonical.",
+      "No automated tests were added for the new lexicon builder in this change."
+    ],
+    "next_steps": [
+      "Run mypy/ruff on src/furlan_g2p/lexicon and add unit tests for builder behavior.",
+      "Verify WikiPron ingestion against real TSV files and adjust dialect heuristics if needed.",
+      "Create a PR targeting feature/hybrid-g2p-paradigm if required by workflow."
+    ],
+    "notes_for_integration": "No PR or commits were created in this environment. Update integration notes if branch/PR conventions differ."
+  }
+}
