@@ -95,6 +95,8 @@
   ],
   "pr": {
     "target_branch": "feature/hybrid-g2p-paradigm",
-    "status": "pending_creation"
+    "status": "created",
+    "url": "https://github.com/daurmax/FurlanG2P/pull/25",
+    "head_branch": "agent/a4-dialect-pipeline"
   }
 }
