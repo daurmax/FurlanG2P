@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A6_cli_lexicon",
+  "component": "cli",
+  "status": "complete",
+  "delivery_mode": "pr",
+  "branch": {
+    "merge_target": "feature/hybrid-g2p-paradigm"
+  },
+  "summary": "Implemented a new `lexicon` CLI command group with build/info/export/validate subcommands, wired it into the main CLI, added test coverage, and updated user-facing documentation.",
+  "changes": {
+    "files_created": [
+      "src/furlan_g2p/cli/lexicon.py",
+      "tests/test_cli_lexicon.py"
+    ],
+    "files_modified": [
+      "src/furlan_g2p/cli/app.py",
+      "docs/usage.md",
+      "docs/architecture.md",
+      "README.md",
+      "README-pypi.md",
+      "pyproject.toml"
+    ],
+    "commands_added": [
+      "furlang2p lexicon build",
+      "furlang2p lexicon info",
+      "furlang2p lexicon export",
+      "furlang2p lexicon validate"
+    ]
+  },
+  "implementation_notes": {
+    "cli_thin_layer": "All lexicon commands delegate parsing/validation/export responsibilities to `furlan_g2p.lexicon` library modules.",
+    "validation_exit_codes": "`lexicon validate` exits with code 1 on errors, and also on warnings when `--strict` is enabled.",
+    "supported_formats": {
+      "build_output": ["jsonl", "tsv"],
+      "export_output": ["jsonl", "tsv", "tsv-simple"],
+      "input_auto_detect": [".tsv", ".txt", ".jsonl", ".ndjson"]
+    },
+    "reporting": "`info` supports both text and `--json` output, including source/dialect breakdowns and validation issue summaries."
+  },
+  "verification": {
+    "commands": [
+      {
+        "cmd": "py -m ruff check src/furlan_g2p/cli/lexicon.py src/furlan_g2p/cli/app.py tests/test_cli_lexicon.py",
+        "result": "passed"
+      },
+      {
+        "cmd": "py -m mypy src/furlan_g2p/cli/lexicon.py src/furlan_g2p/cli/app.py tests/test_cli_lexicon.py",
+        "result": "passed"
+      },
+      {
+        "cmd": "py -m pytest tests/test_cli_lexicon.py tests/test_cli_pipeline_commands.py tests/test_cli_errors.py tests/test_cli_ipa.py",
+        "result": "passed",
+        "details": "17 passed"
+      },
+      {
+        "cmd": "py -m pip install -e \".[dev]\"",
+        "result": "passed"
+      },
+      {
+        "cmd": "py -m furlan_g2p.main lexicon --help",
+        "result": "passed"
+      },
+      {
+        "cmd": "py -m furlan_g2p.main lexicon build tmp_cli_smoke/sample.tsv -o tmp_cli_smoke/lexicon.jsonl --source-type tsv",
+        "result": "passed"
+      },
+      {
+        "cmd": "py -m furlan_g2p.main lexicon info tmp_cli_smoke/lexicon.jsonl",
+        "result": "passed"
+      },
+      {
+        "cmd": "py -m furlan_g2p.main lexicon validate tmp_cli_smoke/lexicon.jsonl --json",
+        "result": "passed"
+      }
+    ]
+  },
+  "acceptance_criteria": {
+    "lexicon_help_lists_subcommands": "met",
+    "build_creates_lexicon": "met",
+    "info_displays_stats": "met",
+    "export_converts_formats": "met",
+    "validate_checks_integrity_and_exit_codes": "met",
+    "help_texts_present": "met",
+    "error_messages_actionable": "met",
+    "exit_codes_correct": "met"
+  },
+  "notes_for_reviewer": [
+    "`lexicon validate` classifies `duplicate_pronunciation` as warning and unknown-symbol issues as errors."
+  ]
+}
