@@ -188,9 +188,7 @@ def _build_evaluation_payload(
         "errors": [
             _word_result_to_payload(detail) for detail in result.details if not detail.is_correct
         ],
-        "prediction_failures": [
-            {"word": word, "error": error} for word, error in failures
-        ],
+        "prediction_failures": [{"word": word, "error": error} for word, error in failures],
     }
     if include_details:
         payload["details"] = [_word_result_to_payload(detail) for detail in result.details]
@@ -234,9 +232,7 @@ def _format_evaluation_text(
         else:
             lines.append("Errors:")
             for detail in errors:
-                lines.append(
-                    f"{detail.word}\tpredicted={detail.predicted}\texpected={detail.gold}"
-                )
+                lines.append(f"{detail.word}\tpredicted={detail.predicted}\texpected={detail.gold}")
 
     if failures and (show_errors or include_details):
         lines.append("Prediction failure details:")
@@ -316,9 +312,7 @@ def _build_coverage_payload(
         payload["oov_list"] = sorted({item.word for item in report.records if item.status == "oov"})
 
     if include_details:
-        payload["details"] = [
-            {"word": item.word, "status": item.status} for item in report.records
-        ]
+        payload["details"] = [{"word": item.word, "status": item.status} for item in report.records]
 
     return payload
 

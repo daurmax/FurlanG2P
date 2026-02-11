@@ -22,7 +22,7 @@ try:  # pragma: no cover - optional dependency
 except Exception:  # pragma: no cover - optional dependency
     yaml = None
 
-_TIE_BARS = {"\u0361", "\u035C"}  # tie bar above / below
+_TIE_BARS = {"\u0361", "\u035c"}  # tie bar above / below
 _MULTISPACE_RE = re.compile(r"\s+")
 
 
@@ -191,9 +191,7 @@ class IPACanonicalize:
                 continue
             if symbol in self._inventory:
                 continue
-            base = "".join(
-                ch for ch in symbol if unicodedata.category(ch) != "Mn"
-            )
+            base = "".join(ch for ch in symbol if unicodedata.category(ch) != "Mn")
             if base in self._inventory:
                 continue
             unknown.add(symbol)

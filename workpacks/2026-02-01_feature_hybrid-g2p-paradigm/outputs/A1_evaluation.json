@@ -1,0 +1,177 @@
+{
+  "prompt_id": "A1_evaluation",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "status": "completed",
+  "timestamp": "2026-02-01",
+  "summary": "Implemented evaluation module with WER, PER, and stress accuracy metrics",
+  "files_created": [
+    "src/furlan_g2p/evaluation/__init__.py",
+    "src/furlan_g2p/evaluation/types.py",
+    "src/furlan_g2p/evaluation/metrics.py"
+  ],
+  "verification": {
+    "all_passed": true,
+    "notes": "Validated during A10 integration: pytest/mypy/ruff/coverage gates passed on 2026-02-11."
+  },
+  "deliverables": {
+    "created_files": [
+      "src/furlan_g2p/evaluation/__init__.py",
+      "src/furlan_g2p/evaluation/types.py",
+      "src/furlan_g2p/evaluation/metrics.py"
+    ],
+    "modified_files": [
+      "src/furlan_g2p/core/interfaces.py"
+    ]
+  },
+  "implementation_details": {
+    "core_components": {
+      "IEvaluator": {
+        "location": "src/furlan_g2p/core/interfaces.py",
+        "description": "Abstract base class for evaluation metrics",
+        "methods": [
+          "evaluate(predictions, gold) -> EvaluationResult",
+          "word_error_rate(predictions, gold) -> float",
+          "phoneme_error_rate(predictions, gold) -> float",
+          "stress_accuracy(predictions, gold) -> float",
+          "evaluate_from_tsv(tsv_path, predictions, dialect_filter) -> EvaluationResult"
+        ]
+      },
+      "Evaluator": {
+        "location": "src/furlan_g2p/evaluation/metrics.py",
+        "description": "Concrete implementation of IEvaluator interface",
+        "features": [
+          "WER computation with IPA normalization",
+          "PER using Levenshtein distance over phoneme sequences",
+          "Stress accuracy based on stress marker position",
+          "TSV batch evaluation with dialect filtering"
+        ]
+      },
+      "EvaluationResult": {
+        "location": "src/furlan_g2p/evaluation/types.py",
+        "description": "Dataclass for aggregate evaluation metrics",
+        "fields": [
+          "wer: float [0.0, 1.0]",
+          "per: float [0.0, ∞)",
+          "stress_accuracy: float [0.0, 1.0]",
+          "word_count: int",
+          "correct_count: int",
+          "details: list[WordResult]"
+        ]
+      },
+      "WordResult": {
+        "location": "src/furlan_g2p/evaluation/types.py",
+        "description": "Dataclass for per-word evaluation breakdown",
+        "fields": [
+          "word: str",
+          "predicted: str",
+          "gold: str",
+          "is_correct: bool",
+          "phoneme_distance: float"
+        ]
+      }
+    },
+    "algorithms": {
+      "ipa_normalization": {
+        "steps": [
+          "Unicode NFC normalization",
+          "Strip whitespace and punctuation",
+          "Canonicalize g → ɡ (U+0261)",
+          "Remove tie bars (U+0361)"
+        ],
+        "rationale": "Ensures consistent comparison across different IPA representations"
+      },
+      "phoneme_tokenization": {
+        "approach": "Character-level iteration with diacritic handling",
+        "handles": [
+          "Base phoneme characters",
+          "Combining diacritics (category Mn, Mc, Me)",
+          "Multi-character phonemes with modifiers"
+        ],
+        "rationale": "Preserves phoneme integrity for accurate PER computation"
+      },
+      "levenshtein_distance": {
+        "implementation": "Dynamic programming with O(mn) time and space",
+        "operations": [
+          "Insertions",
+          "Deletions",
+          "Substitutions"
+        ],
+        "rationale": "Standard algorithm for sequence comparison"
+      },
+      "stress_extraction": {
+        "marker": "ˈ (U+02C8 PRIMARY STRESS)",
+        "approach": "Simple string position lookup",
+        "edge_cases": "Returns None if marker not found"
+      }
+    },
+    "tsv_format": {
+      "columns": [
+        "word (required)",
+        "ipa (required)",
+        "dialect (optional)"
+      ],
+      "separator": "\\t",
+      "comments": "Lines starting with # are ignored",
+      "filtering": "Supports dialect-based filtering during evaluation"
+    }
+  },
+  "dependencies": {
+    "runtime": [
+      "No additional runtime dependencies (stdlib only)"
+    ],
+    "dev": [
+      "pytest (for testing)",
+      "mypy (for type checking)",
+      "ruff (for linting)"
+    ]
+  },
+  "design_decisions": {
+    "no_rapidfuzz": {
+      "decision": "Implemented Levenshtein distance from scratch",
+      "rationale": "Keep runtime dependencies minimal as per constraints; stdlib implementation is sufficient for evaluation workloads"
+    },
+    "phoneme_tokenization": {
+      "decision": "Simple character + diacritic grouping",
+      "rationale": "Sufficient for common IPA usage; complex affricates and suprasegmentals handled by Unicode combining characters"
+    },
+    "stress_accuracy": {
+      "decision": "Position-based comparison only",
+      "rationale": "Simple and deterministic; assumes stress markers are consistently placed in IPA strings"
+    },
+    "type_checking": {
+      "decision": "TYPE_CHECKING import guard for EvaluationResult in interfaces.py",
+      "rationale": "Avoid circular import between core.interfaces and evaluation.types"
+    }
+  },
+  "testing_notes": {
+    "edge_cases": [
+      "Empty input lists (returns 0.0 metrics)",
+      "Identical predictions and gold (WER=0.0, PER=0.0)",
+      "Completely wrong predictions (WER=1.0, high PER)",
+      "Missing stress markers (excluded from stress_accuracy denominator)",
+      "Length mismatches (raises ValueError)"
+    ],
+    "verification_commands": [
+      "python -c \"from furlan_g2p.evaluation import Evaluator, EvaluationResult; print('OK')\"",
+      "mypy src/furlan_g2p/evaluation/",
+      "ruff check src/furlan_g2p/evaluation/"
+    ]
+  },
+  "known_limitations": {
+    "phoneme_tokenization": "Does not handle rare IPA ligatures or complex suprasegmental features beyond basic combining diacritics",
+    "stress_accuracy": "Only considers primary stress marker (ˈ); does not handle secondary stress (ˌ) separately",
+    "tsv_parsing": "No validation of IPA well-formedness; assumes input is valid IPA"
+  },
+  "next_steps": {
+    "immediate": [
+      "Run verification commands",
+      "Create unit tests for edge cases",
+      "Integrate with CLI (A7)"
+    ],
+    "future": [
+      "Add secondary stress handling",
+      "Support additional IPA canonicalization rules",
+      "Implement confidence intervals for metrics"
+    ]
+  }
+}

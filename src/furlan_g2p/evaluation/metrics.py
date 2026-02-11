@@ -144,9 +144,7 @@ class Evaluator(IEvaluator):
             ValueError: If predictions and gold have different lengths
         """
         if len(predictions) != len(gold):
-            raise ValueError(
-                f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold"
-            )
+            raise ValueError(f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold")
 
         if len(predictions) == 0:
             return EvaluationResult(
@@ -165,7 +163,7 @@ class Evaluator(IEvaluator):
         stress_matches = 0
         stress_comparable = 0
 
-        for (word_pred, ipa_pred), (word_gold, ipa_gold) in zip(predictions, gold):
+        for (word_pred, ipa_pred), (_word_gold, ipa_gold) in zip(predictions, gold, strict=True):
             # Normalize IPA
             norm_pred = _normalize_ipa(ipa_pred)
             norm_gold = _normalize_ipa(ipa_gold)
@@ -231,16 +229,14 @@ class Evaluator(IEvaluator):
             ValueError: If predictions and gold have different lengths
         """
         if len(predictions) != len(gold):
-            raise ValueError(
-                f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold"
-            )
+            raise ValueError(f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold")
 
         if len(predictions) == 0:
             return 0.0
 
         correct_count = sum(
             1
-            for pred, gld in zip(predictions, gold)
+            for pred, gld in zip(predictions, gold, strict=True)
             if _normalize_ipa(pred) == _normalize_ipa(gld)
         )
 
@@ -260,9 +256,7 @@ class Evaluator(IEvaluator):
             ValueError: If predictions and gold have different lengths
         """
         if len(predictions) != len(gold):
-            raise ValueError(
-                f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold"
-            )
+            raise ValueError(f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold")
 
         if len(predictions) == 0:
             return 0.0
@@ -270,7 +264,7 @@ class Evaluator(IEvaluator):
         total_distance = 0
         total_gold_phonemes = 0
 
-        for pred, gld in zip(predictions, gold):
+        for pred, gld in zip(predictions, gold, strict=True):
             norm_pred = _normalize_ipa(pred)
             norm_gold = _normalize_ipa(gld)
 
@@ -296,9 +290,7 @@ class Evaluator(IEvaluator):
             ValueError: If predictions and gold have different lengths
         """
         if len(predictions) != len(gold):
-            raise ValueError(
-                f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold"
-            )
+            raise ValueError(f"Length mismatch: {len(predictions)} predictions vs {len(gold)} gold")
 
         if len(predictions) == 0:
             return 0.0
@@ -306,7 +298,7 @@ class Evaluator(IEvaluator):
         stress_matches = 0
         stress_comparable = 0
 
-        for pred, gld in zip(predictions, gold):
+        for pred, gld in zip(predictions, gold, strict=True):
             norm_pred = _normalize_ipa(pred)
             norm_gold = _normalize_ipa(gld)
 

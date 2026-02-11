@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "workpack": "2026-02-01_feature_hybrid-g2p-paradigm",
+  "prompt": "A8_tests",
+  "component": "tests",
+  "status": "complete",
+  "delivery_mode": "pr",
+  "summary": "Implemented a comprehensive hybrid G2P test suite across evaluation, lexicon, ML interface and CLI modules, added shared fixtures, fixed TSV BOM handling in lexicon storage, and verified coverage targets (>=80%) for evaluation/lexicon/ml modules.",
+  "changes": {
+    "files_created": [
+      "tests/test_evaluation.py",
+      "tests/test_lexicon_schema.py",
+      "tests/test_lexicon_storage.py",
+      "tests/test_lexicon_lookup.py",
+      "tests/test_ml_interface.py",
+      "tests/test_cli_evaluate.py",
+      "workpacks/2026-02-01_feature_hybrid-g2p-paradigm/outputs/A8_tests.json"
+    ],
+    "files_modified": [
+      "tests/conftest.py",
+      "tests/test_lexicon_builder.py",
+      "tests/test_cli_lexicon.py",
+      "tests/test_cli_help.py",
+      "src/furlan_g2p/lexicon/storage.py"
+    ],
+    "breaking_change": false
+  },
+  "verification": {
+    "commands": [
+      {
+        "cmd": "py -3 -m ruff check src/furlan_g2p/lexicon/storage.py tests/conftest.py tests/test_cli_help.py tests/test_cli_lexicon.py tests/test_cli_evaluate.py tests/test_evaluation.py tests/test_lexicon_builder.py tests/test_lexicon_lookup.py tests/test_lexicon_schema.py tests/test_lexicon_storage.py tests/test_ml_interface.py",
+        "result": "pass"
+      },
+      {
+        "cmd": "py -3 -m pytest tests/ -q",
+        "result": "pass",
+        "details": "176 passed"
+      },
+      {
+        "cmd": "py -3 -m pytest tests/ --cov=src/furlan_g2p/evaluation --cov=src/furlan_g2p/lexicon --cov=src/furlan_g2p/ml --cov-report=term-missing --cov-fail-under=80",
+        "result": "pass",
+        "details": "Required test coverage of 80% reached. Total coverage: 87.63%"
+      }
+    ]
+  },
+  "artifacts": {
+    "coverage_report": {
+      "total": {
+        "statements": 954,
+        "missed": 118,
+        "coverage_percent": 87.63
+      },
+      "evaluation": {
+        "statements": 162,
+        "missed": 1,
+        "coverage_percent": 99.38
+      },
+      "lexicon": {
+        "statements": 741,
+        "missed": 111,
+        "coverage_percent": 85.02
+      },
+      "ml": {
+        "statements": 51,
+        "missed": 6,
+        "coverage_percent": 88.24
+      }
+    }
+  },
+  "acceptance_criteria": {
+    "all_new_tests_pass": "met",
+    "coverage_evaluation_ge_80": "met",
+    "coverage_lexicon_ge_80": "met",
+    "coverage_ml_ge_80": "met",
+    "cli_success_and_error_cases": "met",
+    "no_flaky_environment_path_dependency": "met",
+    "existing_tests_still_pass": "met"
+  },
+  "pr": {
+    "target_branch": "feature/hybrid-g2p-paradigm",
+    "status": "not_created_in_local_environment",
+    "url": null,
+    "notes": "Changes are prepared locally; create/push branch and open PR in repository host."
+  }
+}
