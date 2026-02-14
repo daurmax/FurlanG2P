@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "workpacks/WORKPACK_OUTPUT_SCHEMA.json",
   "title": "Workpack Agent Handoff Output",
-  "description": "Structured handoff produced by each agent after completing a prompt. Required for Workpack Protocol v3.",
+  "description": "Structured handoff produced by each agent after completing a prompt. Required for Workpack Protocol v2+. Extended in v4 with severity/iteration/B-series fields. Extended in v5 with execution cost tracking, repos, and structured change details.",
   "type": "object",
   "required": [
     "schema_version",
@@ -29,13 +29,13 @@
     },
     "prompt": {
       "type": "string",
-      "description": "Prompt basename without extension (e.g., A1_library, B3_g2p_edge_case).",
+      "description": "Prompt basename without extension (e.g., A1_library, B1_library_oov_handling).",
       "minLength": 3
     },
     "component": {
       "type": "string",
       "description": "Affected component.",
-      "enum": ["bootstrap", "library", "cli", "tests", "docs", "integration"]
+      "enum": ["bootstrap", "library", "cli", "tests", "ml", "docs", "meta"]
     },
     "delivery_mode": {
       "type": "string",
@@ -74,7 +74,7 @@
         "contracts_changed": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Any API/class/function contracts impacted (file paths or identifiers)."
+          "description": "Any API/DTO/schema contracts impacted (file paths or identifiers)."
         },
         "breaking_change": { "type": "boolean", "description": "True if a breaking change was introduced." }
       },
@@ -100,36 +100,82 @@
         },
         "regression_added": {
           "type": "boolean",
-          "description": "True if a regression test was added for this change."
+          "description": "True if a regression test/check was added (required for B-series when feasible)."
+        },
+        "regression_notes": {
+          "type": "string",
+          "description": "Where the regression lives and what it covers."
         }
       },
       "additionalProperties": true
     },
     "handoff": {
       "type": "object",
-      "required": ["summary"],
+      "required": ["summary", "next_steps", "known_issues"],
       "properties": {
-        "summary": {
-          "type": "string",
-          "description": "Brief summary of what was accomplished."
-        },
-        "known_issues": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Any known issues or limitations."
-        },
-        "next_steps": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Suggested follow-up actions."
-        },
-        "notes_for_integration": {
-          "type": "string",
-          "description": "Special notes for the A5 integration agent."
-        }
+        "summary": { "type": "string", "description": "Short summary of what was done." },
+        "next_steps": { "type": "array", "items": { "type": "string" } },
+        "known_issues": { "type": "array", "items": { "type": "string" } }
       },
       "additionalProperties": true
+    },
+    "notes": { "type": "string" },
+    "repos": {
+      "type": "array",
+      "description": "(v5) Repositories touched by this prompt (e.g. FurlanG2P).",
+      "items": { "type": "string" }
+    },
+    "execution": {
+      "type": "object",
+      "description": "(v5) Cost and execution metrics for this prompt run.",
+      "properties": {
+        "model": { "type": "string", "description": "Model identifier used (e.g. claude-opus-4-20250514, gpt-4.1)." },
+        "tokens_in": { "type": "integer", "description": "Approximate input tokens consumed.", "minimum": 0 },
+        "tokens_out": { "type": "integer", "description": "Approximate output tokens produced.", "minimum": 0 },
+        "duration_ms": { "type": "integer", "description": "Wall-clock duration in milliseconds.", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "severity": {
+      "type": ["string", "null"],
+      "description": "(v4) Bug severity classification. Required for B-series prompts.",
+      "enum": ["blocker", "major", "minor", null]
+    },
+    "iteration": {
+      "type": "integer",
+      "description": "(v4) V-loop iteration number. Starts at 1 for first verification run. Used by V2_bugfix_verify.",
+      "minimum": 1
+    },
+    "b_series_resolved": {
+      "type": "array",
+      "description": "(v4) List of B-series prompt basenames confirmed resolved in this verification. Used by V2_bugfix_verify.",
+      "items": { "type": "string" }
+    },
+    "b_series_remaining": {
+      "type": "array",
+      "description": "(v4) List of B-series prompt basenames still unresolved. Used by V2_bugfix_verify.",
+      "items": { "type": "string" }
+    },
+    "b_series_budget_warning": {
+      "type": "boolean",
+      "description": "(v4) True if total B-series count exceeds budget threshold (>5). Used by V2_bugfix_verify.",
+      "default": false
+    },
+    "change_details": {
+      "type": "array",
+      "description": "(v5) Structured per-file change details. Supplements the flat lists in changes.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "repo": { "type": "string", "description": "Repository name." },
+          "file": { "type": "string", "description": "Relative file path within the repo." },
+          "action": { "type": "string", "enum": ["created", "modified", "deleted", "renamed"] },
+          "lines_added": { "type": "integer", "minimum": 0 },
+          "lines_removed": { "type": "integer", "minimum": 0 }
+        },
+        "required": ["repo", "file", "action"]
+      }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }

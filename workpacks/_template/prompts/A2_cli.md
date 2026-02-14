@@ -1,19 +1,30 @@
 # CLI Agent Prompt
 
-> Prompt for the CLI agent to implement command-line interface functionality.
+> CLI agent for FurlanG2P. Handles changes to the `furlang2p` command-line interface, subcommands, batch processing, and CLI output formatting.
+
+> **v5**: This template includes YAML front-matter. Fill in `depends_on` and `repos` before use.
+
+---
+
+## YAML Front-Matter (v5)
+
+```yaml
+---
+depends_on: [A1_library]    # typically depends on library changes being ready
+repos: [FurlanG2P]          # repos this prompt touches
+---
+```
 
 ---
 
 ## READ FIRST
 
-Read these files before starting (in priority order):
-
-1. `README.md` — Project overview and CLI usage
-2. `AGENTS.md` — Agent guidelines and conventions
-3. `src/furlan_g2p/cli/` — Existing CLI structure
-4. `./workpacks/<workpack>/00_request.md` — Original request and acceptance criteria
-5. `./workpacks/<workpack>/01_plan.md` — Full work breakdown and dependencies
-6. `./workpacks/_template/prompts/PROMPT_STYLE_GUIDE.md` — Prompt conventions (v3)
+1. `./README.md` — Project overview, CLI usage section
+2. `./AGENTS.md` — Agent guidelines
+3. `./README-pypi.md` — PyPI user-facing documentation
+4. `./workpacks/instances/<workpack>/00_request.md` — Original request
+5. `./workpacks/instances/<workpack>/01_plan.md` — Full plan
+6. `./workpacks/_template/prompts/PROMPT_STYLE_GUIDE.md` — Prompt conventions (v5)
 
 ---
 
@@ -21,24 +32,31 @@ Read these files before starting (in priority order):
 
 This is part of workpack: `YYYY-MM-DD_<category>_<short-slug>`
 
-**Objective**: <!-- One-line summary of what the CLI agent must accomplish -->
+**Objective**: <!-- One-line summary of the CLI work to be done -->
 
 ---
 
 ## Delivery Mode
 
-<!-- Choose one based on 00_request.md -->
+- **PR-based**: Open a PR targeting `main` and link it in `99_status.md`.
+- **Direct push**: Push directly to `main`; record commits in `99_status.md`.
 
-- **PR-based**: Create a PR targeting `main` and link it in `99_status.md`
-- **Direct push**: Push directly to feature branch; record commits in `99_status.md`
+---
+
+## Primary Modules
+
+| Module | Path | Purpose |
+|--------|------|---------|
+| CLI commands | `src/furlan_g2p/cli/` | Click/argparse command definitions |
+| Scripts | `scripts/` | Standalone helper scripts |
 
 ---
 
 ## Objective
 
-<!-- 
-Detailed description of WHAT to accomplish (1-3 paragraphs).
-Focus on the end goal and user experience.
+<!--
+Describe WHAT CLI changes must be accomplished.
+Focus on end goals: new subcommands, changed output formats, batch features.
 -->
 
 ---
@@ -46,52 +64,45 @@ Focus on the end goal and user experience.
 ## Reference Points
 
 <!--
-Semantic references to existing CLI patterns.
+Point to existing patterns by name — NEVER by line numbers.
 
 Example:
-- **Command pattern**: Follow the structure of `ipa_command` in `src/furlan_g2p/cli/`
-- **Option handling**: Use Click decorators like existing commands
-- **Output formatting**: Follow the console output style from `ipa` command
+- **CLI pattern**: Follow the structure of the existing `phonemize` subcommand
+- **Batch processing**: See `csv_batch_process` in `src/furlan_g2p/cli/`
+- **Output format**: Follow the JSON output pattern from `evaluate` subcommand
 -->
 
-- **Pattern reference 1**: <!-- Description -->
-- **Pattern reference 2**: <!-- Description -->
+- **Reference 1**: <!-- Description -->
 
 ---
 
 ## Implementation Requirements
 
 <!--
-Behavioral specifications for the CLI.
+Describe WHAT the CLI must do, not HOW to code it.
 
 Example:
-- The command must accept file input via --input option
-- Output should go to stdout by default, with --output option for file
-- Error messages should go to stderr with appropriate exit codes
-- Help text must be clear and include examples
+- Add a new `coverage` subcommand that accepts a word list file
+- Output must support both JSON and TSV formats via --format flag
+- Progress bar should be shown for batch operations
 -->
 
 - Requirement 1
 - Requirement 2
-- Requirement 3
 
 ---
 
-## Contracts
+## Subagent Strategy
 
 <!--
-CLI command signatures (Click decorators).
-
-Example:
-### new-command (new subcommand)
-| Option | Type | Default | Notes |
-|--------|------|---------|-------|
-| --input | Path | - | Input file path |
-| --output | Path | stdout | Output destination |
-| --format | Choice | text | Output format: text, json |
+Identify parallelizable CLI subtasks.
 -->
 
-<!-- Define new commands or reference existing ones -->
+---
+
+## Task Tracking
+
+If your tool/model supports a structured todo list (e.g., `manage_todo_list`), use it to track each subcommand or CLI change as a discrete step.
 
 ---
 
@@ -99,30 +110,30 @@ Example:
 
 ### In Scope
 
-- <!-- Item 1 -->
-- <!-- Item 2 -->
+- CLI command changes in `src/furlan_g2p/cli/`
+- CLI-specific tests
 
 ### Out of Scope
 
-- <!-- Item 1 -->
-- <!-- Item 2 -->
+- Core library logic (handled by A1_library)
+- ML model changes (handled by A4_ml)
+- Documentation beyond CLI help text (handled by A6_docs)
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Criterion 3
+- [ ] <!-- Specific, testable criterion from 00_request.md -->
+- [ ] `furlang2p --help` shows new/updated commands
+- [ ] All existing CLI tests pass
 
 ---
 
 ## Constraints
 
-- **CRITICAL**: <!-- Critical constraint -->
-- CLI must work on Windows and Unix
-- Use Click for all CLI handling
-- Follow existing CLI patterns in the project
+- Follow existing CLI framework conventions (Click/argparse as used)
+- `--help` text must be clear and complete
+- Follow ruff/mypy configs in `pyproject.toml`
 
 ---
 
@@ -131,42 +142,20 @@ Example:
 ### Commands
 
 ```bash
-# Install in development mode
 pip install -e ".[dev]"
-
-# Test CLI help
-furlang2p --help
-furlang2p <new-command> --help
-
-# Test basic functionality
-furlang2p <new-command> <test-input>
-
-# Run CLI-specific tests
-pytest tests/test_cli.py -v
-
-# Type checking
+python -m pytest tests/ -v -k cli
 mypy src/furlan_g2p/cli/
-
-# Linting
 ruff check src/furlan_g2p/cli/
+furlang2p --help
 ```
-
-### Verification Checklist
-
-- [ ] CLI help is clear and complete
-- [ ] Command works as expected
-- [ ] Error handling is appropriate
-- [ ] Tests pass
-- [ ] Type checking passes
 
 ---
 
 ## Handoff Output (JSON) — REQUIRED
 
-After completing the work, create/update:
+**Path**: `./workpacks/instances/<workpack>/outputs/A2_cli.json`
 
-**Path**: `./workpacks/<workpack>/outputs/A2_cli.json`
-
+<!-- lint-ignore-code-block -->
 ```json
 {
   "schema_version": "1.0",
@@ -177,31 +166,23 @@ After completing the work, create/update:
   "branch": {
     "base": "<base-branch>",
     "work": "<work-branch>",
-    "merge_target": "<merge-target>"
+    "merge_target": "main"
   },
-  "artifacts": {
-    "pr_url": "<if PR-based>",
-    "commit_shas": ["<sha1>"]
-  },
-  "changes": {
-    "files_modified": ["src/furlan_g2p/cli/..."],
-    "files_created": [],
-    "contracts_changed": [],
-    "breaking_change": false
-  },
+  "repos": ["FurlanG2P"],
+  "artifacts": { "pr_url": "", "commit_shas": [] },
+  "changes": { "files_modified": [], "files_created": [], "contracts_changed": [], "breaking_change": false },
+  "change_details": [],
   "verification": {
     "commands": [
-      { "cmd": "furlang2p --help", "result": "pass" },
-      { "cmd": "pytest tests/test_cli.py -v", "result": "pass" },
-      { "cmd": "mypy src/furlan_g2p/cli/", "result": "pass" }
+      {"cmd": "python -m pytest tests/ -v -k cli", "result": "pass"},
+      {"cmd": "furlang2p --help", "result": "pass"}
     ],
-    "regression_added": true
+    "regression_added": false,
+    "regression_notes": ""
   },
-  "handoff": {
-    "summary": "<one-line summary>",
-    "known_issues": [],
-    "next_steps": []
-  }
+  "execution": { "model": "", "tokens_in": 0, "tokens_out": 0, "duration_ms": 0 },
+  "handoff": { "summary": "", "next_steps": [], "known_issues": [] },
+  "notes": ""
 }
 ```
 
@@ -209,19 +190,16 @@ After completing the work, create/update:
 
 ## Stop Conditions
 
-### Continue if:
-- Minor help text improvements could be made
+Stop and escalate if:
 
-### Escalate if:
-- Library API (A1) is not ready or has issues
-- Click version conflicts
+- Required library API not yet available (wait for A1_library)
+- CLI framework change needed (architectural decision required)
 
 ---
 
 ## Deliverables
 
-- [ ] CLI command implemented
-- [ ] Help text complete
-- [ ] Tests pass
-- [ ] `outputs/A2_cli.json` created
-- [ ] `99_status.md` updated
+- [ ] CLI changes implemented
+- [ ] CLI tests added/updated
+- [ ] `furlang2p --help` accurate
+- [ ] Output JSON created

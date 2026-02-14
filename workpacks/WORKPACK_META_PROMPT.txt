@@ -1,19 +1,22 @@
-YOU ARE AN AI AGENT (GitHub Copilot, Claude, etc.). Your job is to drive the "workpack" workflow using Workpack Protocol v3.
+YOU ARE AN AI AGENT (GitHub Copilot, Claude, etc.). Your job is to drive the "workpack" workflow using Workpack Protocol v5.
 
 ===============================================================================
 INTRODUCTION — READ CAREFULLY
 ===============================================================================
 This repo uses "workpacks" for agent-parallel development:
-- A workpack is a folder under `workpacks/` named `YYYY-MM-DD_<category>_<slug>`.
+- A workpack is a folder under `workpacks/instances/` named `YYYY-MM-DD_<category>_<slug>`.
 - Contains: `00_request.md`, `01_plan.md`, `prompts/*.md`, `outputs/`, `99_status.md`.
-- Protocol v3 requires: agent-centric prompts, semantic references, NO code blocks in prompts.
+- Protocol v5 requires: agent-centric prompts, semantic references, NO code blocks in prompts,
+  mandatory verification gate, V-loop for bugfixes, B-series severity, subagent parallelization,
+  DAG dependencies (depends_on front-matter), multi-repo awareness (repos front-matter),
+  execution cost tracking, R-series retrospective.
 
 You MUST read:
 - `workpacks/README.md` — Full documentation
 - `workpacks/_template/prompts/PROMPT_STYLE_GUIDE.md` — Prompt writing rules
 
 ===============================================================================
-PROTOCOL v3 CORE PRINCIPLES — MANDATORY
+PROTOCOL v5 CORE PRINCIPLES — MANDATORY
 ===============================================================================
 1. NO_CODE_BLOCKS: Prompts describe WHAT to implement, not HOW.
    - NEVER include complete code implementations in prompts
@@ -21,26 +24,70 @@ PROTOCOL v3 CORE PRINCIPLES — MANDATORY
    - 80%+ must be prose: objectives, requirements, reference points
 
 2. SEMANTIC_REFERENCES: Point to patterns by name, not line numbers.
-   - CORRECT: "Follow the pattern of Normalizer.normalize method"
-   - WRONG: "See lines 45-89 of normalizer.py"
+   - CORRECT: "Follow the pattern of UserService.CreateAsync method"
+   - WRONG: "See lines 45-89 of UserService.cs"
 
 3. AGENT_AS_IMPLEMENTER: Each agent implements based on requirements.
    - Agents are implementers, NOT copy-pasters
    - Let agents investigate the codebase and design solutions
 
-4. INTEGRATION_AS_REVIEWER: A5 agent is the Merge Reviewer.
+4. INTEGRATION_AS_REVIEWER: A5 agent is the Merge Reviewer (V1 gate).
    - Validates all agent outputs
-   - Runs tests: `pytest tests/ -v`
-   - Runs type checks: `mypy src/`
-   - Runs linting: `ruff check src/ tests/`
+   - Runs tests: `python -m pytest tests/ -v`
+   - Runs type checking: `mypy src/ tests/`
+   - Runs lint checking: `ruff check src/ tests/`
    - Cross-checks acceptance criteria
    - Authorizes or blocks merge
+   - A5 is a FIXED ROLE NAME — always A5, even if A3/A4 are absent
+
+5. MANDATORY_VERIFICATION: Every workpack MUST have a verification prompt.
+   - A5_integration_meta.md is ALWAYS required (even for small workpacks)
+   - Linter will ERROR if no A5_* or V#_* prompt exists
+
+6. V_LOOP: Post-bugfix iterative verification.
+   - When B-series prompts exist, V2_bugfix_verify.md is created
+   - V2 runs iteratively: verify → new bugs? → new B-series → re-verify
+   - Terminates when all checks pass
+
+7. B_SERIES_SEVERITY: Every B-series prompt MUST declare severity.
+   - `blocker`: cannot merge, V-loop MUST NOT pass
+   - `major`: significant impact, V-loop SHOULD block
+   - `minor`: cosmetic/edge case, V-loop MAY proceed with note
+
+8. SUBAGENT_PARALLELIZATION: Leverage subagents when possible.
+   - Spawn subagents for independent subtasks within a prompt
+   - Use subagents for parallel research/investigation
+   - Document subagent usage in output JSON
+
+9. TASK_TRACKING: Use structured todo lists when available.
+   - Maintain a todo list (e.g., manage_todo_list) for multi-step work
+   - Mark tasks in-progress before starting, completed immediately after
+   - Helps avoid losing track of work in complex prompts
+
+10. DAG_DEPENDENCIES: Declare dependencies in YAML front-matter.
+    - Every prompt (except A0) MUST have `depends_on: [...]` in front-matter
+    - Every prompt (except A0) MUST have `repos: [...]` in front-matter
+    - The linter validates DAG for cycles and unknown dependencies
+
+11. MULTI_REPO_AWARENESS: Track which repos each prompt touches.
+    - `repos` field in YAML front-matter and in output JSON
+    - Helps detect conflicts and plan parallelization
+
+12. EXECUTION_COST: Track model usage in output JSON.
+    - `execution` block: model, tokens_in, tokens_out, duration_ms
+    - `change_details` array: per-file action/lines summary
+    - Enables cost tracking and estimation improvement
+
+13. R_SERIES_RETROSPECTIVE: Post-merge learning.
+    - After merge, execute `R1_retrospective.md`
+    - Captures lessons learned, execution cost summary, estimation accuracy
+    - Proposes style guide updates for future workpacks
 
 ===============================================================================
 USER REQUEST (EDIT ONLY THIS SECTION)
 ===============================================================================
 Request Type: <NEW_FEATURE | BUGFIX | REFACTOR | DOCS | PERF | SECURITY | DEBUG | OTHER>
-Short Slug (kebab-case, 2–5 words): <e.g. lexicon-expansion>
+Short Slug (kebab-case, 2–5 words): <e.g. user-authentication>
 High-level Summary (1–3 paragraphs): 
 <PASTE THE REQUEST HERE>
 
@@ -70,7 +117,7 @@ Always also read:
 TASK: CREATE / UPDATE THE WORKPACK
 ===============================================================================
 1) Determine workpack folder name:
-   `workpacks/YYYY-MM-DD_<category>_<slug>/`
+   `workpacks/instances/YYYY-MM-DD_<category>_<slug>/`
 
    Category mapping:
    - NEW_FEATURE → feature
@@ -84,15 +131,17 @@ TASK: CREATE / UPDATE THE WORKPACK
 
 2) If workpack does not exist:
    - Create using rules from Generation or Bug Report prompt
-   - Set Protocol Version: 3 in `00_request.md`
+   - Set Protocol Version: 5 in `00_request.md`
    - Create `outputs/.gitkeep`
+   - Add YAML front-matter (`depends_on`, `repos`) to all prompts
 
 3) If workpack exists (BUGFIX follow-up):
-   - Add next B-series prompt (B1, B2, …)
+   - Add next B-series prompt (B1, B2, …) with mandatory `## Severity`
+   - Ensure V2_bugfix_verify.md exists (create if first B-series)
    - Update `01_plan.md` and `99_status.md`
 
 ===============================================================================
-PROMPT GENERATION RULES (Protocol v3)
+PROMPT GENERATION RULES (Protocol v5)
 ===============================================================================
 When generating prompts, you MUST:
 
@@ -102,36 +151,45 @@ When generating prompts, you MUST:
 - Write Implementation Requirements as behavioral specs
 - Use Contracts section for new interfaces (signatures only)
 - Include verification commands that can be run
+- Include `## Subagent Strategy` section identifying parallelizable subtasks
+- Include `## Task Tracking` section in complex prompts (A5, V2)
+- Include `## Severity` section in ALL B-series prompts
+- Always create A5_integration_meta.md (mandatory verification gate)
+- Create V2_bugfix_verify.md when B-series prompts exist
+- Include YAML front-matter (`depends_on`, `repos`) in every prompt (v5)
+- Include `execution` block in every output JSON (v5)
 
 ❌ DO NOT:
 - Include complete code implementations
 - Reference line numbers
 - Propose specific code solutions
 - Write code the agent should copy-paste
+- Renumber A5 to a lower number (A5 is a fixed role)
 
 Example of WRONG prompt content:
 ```
 ## Step 3: Create Service
-```python
-class PhonemeService:
-    def __init__(self):
-        # 50 lines of code
-```
+\`\`\`csharp
+public class UserService : IUserService
+{
+    // 50 lines of code
+}
+\`\`\`
 ```
 
 Example of CORRECT prompt content:
 ```
 ## Implementation Requirements
 
-Create `PhonemeService` class in `src/furlan_g2p/g2p/`:
-- Follow the pattern of `Normalizer` class in `src/furlan_g2p/normalization/`
-- Accept configuration via constructor injection
-- All public methods must have type hints
-- Raise ValueError for invalid input, not silent failures
+Create `UserService` implementing `IUserService`:
+- Follow the pattern of `ExerciseService` in `src/Services/`
+- Inject `IRepository<User>` and `ILogger<UserService>`
+- All async methods must accept CancellationToken
+- Log at Information level for successful operations
 ```
 
 ===============================================================================
-CRITICAL RULES (Protocol v3 Compliance)
+CRITICAL RULES (Protocol v5 Compliance)
 ===============================================================================
 A) No clarifying questions:
    - Make reasonable assumptions
@@ -141,22 +199,97 @@ A) No clarifying questions:
 B) outputs/ is mandatory:
    - Every completed prompt needs `outputs/<PROMPT>.json`
    - Must conform to `workpacks/WORKPACK_OUTPUT_SCHEMA.json`
+   - Must include `repos` and `execution` fields (v5)
+   - Should include `change_details` array (v5)
 
 C) Completion requires BOTH:
    1) `99_status.md` marks prompt complete (✅ / 🟢)
    2) `outputs/<PROMPT>.json` exists
 
-D) A5 is Merge Reviewer:
-   - Runs pytest, mypy, ruff before merge
-   - Validates all agent outputs
-   - Cross-checks acceptance criteria
+D) A5 is Merge Reviewer (V1 gate):
+   - Runs all test suites before merge
+   - Validates all acceptance criteria
+   - Can block merge if verification fails
+   - Always named A5_integration_meta.md (fixed role)
 
-E) FurlanG2P-Specific:
-   - Always check `AGENTS.md` for coding standards
-   - Consult `docs/references.md` for business logic changes
-   - Update both `README.md` and `README-pypi.md` if user-facing changes
+E) Never include secrets:
+   - No tokens, API keys, credentials in prompts or outputs
+
+F) B-series MUST have severity:
+   - Every B-series prompt MUST include `## Severity` section
+   - Values: `blocker`, `major`, `minor`
+   - Linter will ERROR if severity is missing
+
+G) V-loop for post-bugfix verification:
+   - V2_bugfix_verify.md runs after B-series are resolved
+   - Iterates until all checks pass
+
+H) Subagent parallelization:
+   - Use subagents for independent subtasks when available
+   - Document subagent usage in output JSON
+
+I) Task tracking:
+   - Use a structured todo list (manage_todo_list or equivalent) if the tool supports it
+   - Break work into discrete steps and track progress
+   - Especially important for A5/V2 and multi-step prompts
+
+J) DAG dependencies (v5):
+   - Every prompt MUST have `depends_on` YAML front-matter
+   - Linter validates for cycles and unknown dependencies
+
+K) R-series retrospective (v5):
+   - After merge, execute R1_retrospective.md
+   - Captures lessons learned, execution cost, estimation accuracy
+   - Lifecycle: A0 → A1–A4 → A5/V1 → [B-series] → V2 → MERGE → R1
 
 ===============================================================================
-END — START EXECUTING
+EXECUTION: RUN AGENTS
 ===============================================================================
-Now execute the workflow based on the REQUEST TYPE above.
+After workpack creation:
+
+1) Identify parallel prompts from `01_plan.md`
+
+2) Execution order:
+   - A0_bootstrap first (if present)
+   - A1/A2/A3/A4 in parallel where safe
+   - A5_integration_meta last (Merge Reviewer / V1 gate)
+   - If A5 blocks: create B-series prompts (with severity) + V2_bugfix_verify
+   - Execute B-series prompts
+   - Execute V2_bugfix_verify (V-loop until clean)
+   - After MERGE: execute R1_retrospective (v5)
+
+3) For EACH prompt:
+   - Implement based on requirements (NOT by copying code from prompt)
+   - Use subagents for parallelizable subtasks when available
+   - Use a todo list to track multi-step work (if tool supports it)
+   - Run verification commands
+   - Create `outputs/<PROMPT>.json` (include `repos`, `execution`, `change_details`)
+   - Update `99_status.md`
+
+4) V-Loop (if B-series exist):
+   - After all B-series resolved, run V2_bugfix_verify
+   - If V2 finds new issues: create new B-series, resolve, re-run V2
+   - Loop terminates when V2 passes clean
+
+===============================================================================
+FINAL OUTPUT FROM YOU
+===============================================================================
+When workpack is created/updated, output:
+
+1) Workpack folder name
+2) List of prompt files created/updated
+3) Agent run plan (parallel/sequential) including V-loop if applicable
+4) Reminder checklist:
+   - "Prompts describe WHAT, not HOW"
+   - "No code blocks in prompts"
+   - "A5 validates before merge (V1 gate)"
+   - "B-series have mandatory severity"
+   - "V2_bugfix_verify runs after B-series (V-loop)"
+   - "YAML front-matter: depends_on + repos in every prompt"
+   - "Output JSON: include repos, execution, change_details"
+   - "R1_retrospective after merge"
+   - "Update outputs/ and 99_status.md"
+   - "Use subagents for parallel subtasks"
+   - "Use todo lists to track multi-step work"
+
+Now proceed by reading the required files and executing the workflow.

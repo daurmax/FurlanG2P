@@ -4,7 +4,7 @@
 
 ## Workpack Protocol Version
 
-Workpack Protocol Version: 3
+Workpack Protocol Version: 5
 
 ## Original Request
 
@@ -17,6 +17,7 @@ Workpack Protocol Version: 3
 ## Acceptance Criteria
 
 <!-- List specific, testable criteria that define "done" -->
+<!-- v5: AC should be machine-verifiable where possible (command, test, assertion) -->
 
 - [ ] Criterion 1
 - [ ] Criterion 2
@@ -35,9 +36,11 @@ Workpack Protocol Version: 3
 
 | AC ID | Acceptance Criterion | How to Verify (command/test) |
 |-------|----------------------|------------------------------|
-| AC1 | Feature X works correctly | `pytest tests/test_x.py -v` |
-| AC2 | No type errors | `mypy src/` |
+| AC1 | Feature X works correctly | `python -m pytest tests/ -k test_feature_x` |
+| AC2 | No type errors | `mypy src/ tests/` |
 | AC3 | Documentation updated | Manual review of docs/ folder |
+
+> **v5**: Prefer commands/tests over "Manual review" — machine-verifiable AC enables automated V-loop validation.
 
 ## Delivery Mode
 

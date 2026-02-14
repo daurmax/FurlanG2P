@@ -1,6 +1,6 @@
 # Bootstrap Agent Prompt
 
-> Prompt for the bootstrap agent to set up branches and prerequisites.
+> Prompt for the bootstrap agent to set up branches, prerequisites, and shared infrastructure.
 
 ---
 
@@ -12,7 +12,7 @@ Read these files before starting:
 2. `./AGENTS.md` — Agent guidelines
 3. `./workpacks/<workpack>/00_request.md` — Original request
 4. `./workpacks/<workpack>/01_plan.md` — Full plan with branch strategy
-5. `./workpacks/_template/prompts/PROMPT_STYLE_GUIDE.md` — Prompt conventions (v3)
+5. `./workpacks/_template/prompts/PROMPT_STYLE_GUIDE.md` — Prompt conventions (v5)
 
 ---
 
@@ -20,7 +20,7 @@ Read these files before starting:
 
 This is part of workpack: `YYYY-MM-DD_<category>_<short-slug>`
 
-**Objective**: <!-- One-line summary: typically "Set up feature branch and prerequisites" -->
+**Objective**: <!-- One-line summary: typically "Set up feature branches and prerequisites" -->
 
 ---
 
@@ -33,7 +33,7 @@ This is part of workpack: `YYYY-MM-DD_<category>_<short-slug>`
 ## Objective
 
 <!--
-Describe what branches need to be created and any prerequisites.
+Describe what branches need to be created, in which repos, and any prerequisites.
 Focus on unblocking other agents to work in parallel.
 -->
 
@@ -46,6 +46,7 @@ Reference existing branch naming patterns or setup procedures.
 
 Example:
 - **Branch naming**: Follow existing pattern `feature/<workpack-slug>`
+- **Git workflow**: See README.md for branch conventions
 -->
 
 - **Pattern reference 1**: <!-- Description -->
@@ -58,7 +59,7 @@ Example:
 Describe WHAT must be set up, not HOW (the agent knows git commands).
 
 Example:
-- Create feature branch from main
+- Create feature root branch from main
 - Ensure branch is pushed to origin
 - Verify clean git status
 -->
@@ -73,19 +74,19 @@ Example:
 
 ### In Scope
 
-- Creating feature branch
-- Pushing branch to origin
+- Creating feature branches
+- Pushing branches to origin
 - Verifying clean git status
 
 ### Out of Scope
 
-- Code implementation (handled by A1-A4 agents)
+- Code implementation (handled by A1–A4 agents)
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] Feature branch exists
+- [ ] Feature branch exists in repository
 - [ ] Branch is pushed to origin
 - [ ] `git status` shows clean state
 
@@ -93,8 +94,8 @@ Example:
 
 ## Constraints
 
-- **CRITICAL**: Never force push to main
-- Branch name must follow `feature/<slug>` pattern
+- **CRITICAL**: Never push to `main` without a PR (unless direct push delivery mode)
+- Branch names must follow project convention: `feature/<workpack-slug>`
 
 ---
 
@@ -106,15 +107,14 @@ Example:
 # Verify branch exists
 git branch -a | grep feature/<slug>
 
-# Verify clean status
+# Verify clean git status
 git status
 ```
 
-### Checklist
+### Verification Checklist
 
-- [ ] Branch created
-- [ ] Branch pushed to origin
-- [ ] Clean git status
+- [ ] Feature branch created and pushed
+- [ ] Git status is clean
 
 ---
 
@@ -124,6 +124,7 @@ After completing the work, create/update:
 
 **Path**: `./workpacks/<workpack>/outputs/A0_bootstrap.json`
 
+<!-- lint-ignore-code-block -->
 ```json
 {
   "schema_version": "1.0",
@@ -136,8 +137,10 @@ After completing the work, create/update:
     "work": "feature/<slug>",
     "merge_target": "main"
   },
+  "repos": ["FurlanG2P"],
   "artifacts": {
-    "commit_shas": ["<sha>"]
+    "pr_url": "",
+    "commit_shas": []
   },
   "changes": {
     "files_modified": [],
@@ -145,16 +148,24 @@ After completing the work, create/update:
     "contracts_changed": [],
     "breaking_change": false
   },
+  "change_details": [],
   "verification": {
-    "commands": [
-      { "cmd": "git branch -a", "result": "pass" }
-    ]
+    "commands": [],
+    "regression_added": false,
+    "regression_notes": ""
+  },
+  "execution": {
+    "model": "",
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "duration_ms": 0
   },
   "handoff": {
-    "summary": "Created feature branch feature/<slug>",
-    "known_issues": [],
-    "next_steps": ["Proceed with A1-A4 implementation"]
-  }
+    "summary": "",
+    "next_steps": ["A1, A2, A3 can now proceed on their respective branches"],
+    "known_issues": []
+  },
+  "notes": ""
 }
 ```
 
@@ -162,17 +173,16 @@ After completing the work, create/update:
 
 ## Stop Conditions
 
-### Continue if:
-- Git commands succeed
+Stop and escalate if:
 
-### Escalate if:
-- Branch already exists with conflicting changes
-- Permission issues with remote
+- Branch already exists with conflicting content
+- Permission issues prevent pushing to origin
 
 ---
 
 ## Deliverables
 
-- [ ] Feature branch created and pushed
-- [ ] `outputs/A0_bootstrap.json` created
-- [ ] `99_status.md` updated with A0 status
+- [ ] All required branches created
+- [ ] All branches pushed to origin
+- [ ] Output JSON created in `outputs/A0_bootstrap.json`
+- [ ] Other agents unblocked to proceed
